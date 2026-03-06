@@ -3,12 +3,9 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["tests/**/*.test.ts"],
-    // Serialize test files to eliminate SQLite write contention
+    // Serialize test files to eliminate SQLite write contention.
+    // pool:"forks" + maxWorkers:1 replaces the removed poolOptions.forks.singleFork (Vitest 4).
     pool: "forks",
-    poolOptions: {
-      forks: {
-        singleFork: true,
-      },
-    },
+    maxWorkers: 1,
   },
 });
