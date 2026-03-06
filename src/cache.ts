@@ -16,8 +16,8 @@ import type { ExtractionResult } from "./types.js";
 // ============================================================================
 
 const DEFAULT_DB_PATH = "./data/cache.db";
-/** Free tier calls per day per agent. */
-const FREE_TIER_DAILY_LIMIT = 3;
+/** Free tier calls per day per agent (no auth required). */
+const FREE_TIER_DAILY_LIMIT = 200;
 
 // ============================================================================
 // CACHE

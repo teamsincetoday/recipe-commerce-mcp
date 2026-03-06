@@ -165,8 +165,8 @@ describe("RecipeCache — free tier metering", () => {
     cache.close();
   });
 
-  it("FREE_TIER_DAILY_LIMIT is 3", () => {
-    expect(FREE_TIER_DAILY_LIMIT).toBe(3);
+  it("FREE_TIER_DAILY_LIMIT is 200", () => {
+    expect(FREE_TIER_DAILY_LIMIT).toBe(200);
   });
 
   it("allows exactly FREE_TIER_DAILY_LIMIT-1 calls", () => {

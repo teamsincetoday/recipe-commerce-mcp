@@ -31,6 +31,14 @@ const SERVER_NAME = "recipe-commerce-intelligence";
 const SERVER_VERSION = "0.1.0";
 const TOOL_PRICE_USD = 0.001;
 
+// Input size limits (FIND-4 — prevent oversized payloads reaching OpenAI)
+export const TRANSCRIPT_MAX_CHARS = 100_000; // ~50k words, covers any real cooking video
+export const ID_MAX_CHARS = 200;
+export const API_KEY_MAX_CHARS = 200;
+export const RECIPE_NAME_MAX = 200;
+export const INGREDIENT_NAME_MAX = 200;
+export const INGREDIENT_QUANTITY_MAX = 50;
+
 // ============================================================================
 // AUTH
 // ============================================================================
@@ -77,7 +85,7 @@ function authorize(agentId: string, apiKey?: string): AuthResult {
   const used = cache.getFreeTierUsed(agentId);
   return {
     authorized: false,
-    reason: `Free tier exhausted (${used}/${FREE_TIER_DAILY_LIMIT} calls used today). Set MCP_API_KEYS to continue.`,
+    reason: `Free tier exhausted (${used}/${FREE_TIER_DAILY_LIMIT} calls used today). To continue, set MCP_API_KEYS=your-key in your MCP config, or contact team@sincetoday.com for an API key.`,
   };
 }
 
@@ -125,18 +133,21 @@ export function createServer(): McpServer {
 
   server.tool(
     "extract_recipe_ingredients",
-    "Extract recipe name, ingredient list (with quantity/unit/category), equipment, and cooking technique tags from a cooking video transcript or YouTube URL. Uses GPT-4o-mini. Results are cached by recipe_id.",
+    "Extract structured recipe data from a cooking video transcript or YouTube URL: recipe name, ingredients with quantity and unit, equipment list, and cooking technique tags. Returns a structured ingredient list ready for affiliate product matching and shopping list generation. Use for recipe monetization, cooking content commerce, and automated shoppable recipe creation. Results cached by recipe_id.",
     {
       transcript: z
         .string()
         .min(1)
+        .max(TRANSCRIPT_MAX_CHARS)
         .describe("Raw transcript text OR a YouTube URL (e.g. https://youtube.com/watch?v=...)"),
       recipe_id: z
         .string()
+        .max(ID_MAX_CHARS)
         .optional()
         .describe("Optional recipe identifier for caching. Auto-derived from content if omitted."),
       api_key: z
         .string()
+        .max(API_KEY_MAX_CHARS)
         .optional()
         .describe("Optional API key for paid access beyond the free tier"),
     },
@@ -232,13 +243,13 @@ export function createServer(): McpServer {
 
   server.tool(
     "match_ingredients_to_products",
-    "Match a list of ingredients to purchasable products with affiliate program details, price ranges, commission rates, and substitution alternatives. Accepts ingredient list directly or a recipe_id from a previous extraction.",
+    "Match recipe ingredients to purchasable products on Amazon and specialty retailers. Returns affiliate program details (Amazon Associates, ShareASale, Awin), price range, commission rate (2–10%), and substitution alternatives for each ingredient. Use for recipe affiliate monetization, ingredient sourcing intelligence, and shoppable recipe generation. Accepts ingredient list directly or recipe_id from a prior extract_recipe_ingredients call.",
     {
       ingredients: z
         .array(
           z.object({
-            name: z.string().min(1),
-            quantity: z.string().optional(),
+            name: z.string().min(1).max(INGREDIENT_NAME_MAX),
+            quantity: z.string().max(INGREDIENT_QUANTITY_MAX).optional(),
             unit: z.string().optional(),
             category: z
               .enum(["pantry", "fresh", "dairy", "meat", "seafood", "equipment", "specialty", "other"])
@@ -251,10 +262,12 @@ export function createServer(): McpServer {
         .describe("Ingredient list from extract_recipe_ingredients. Provide this OR recipe_id."),
       recipe_id: z
         .string()
+        .max(ID_MAX_CHARS)
         .optional()
         .describe("Recipe ID from a prior extraction — loads ingredients from cache."),
       api_key: z
         .string()
+        .max(API_KEY_MAX_CHARS)
         .optional()
         .describe("Optional API key for paid access beyond the free tier"),
     },
@@ -335,17 +348,18 @@ export function createServer(): McpServer {
 
   server.tool(
     "suggest_affiliate_products",
-    "Given a recipe name and ingredient list, return a ranked shopping list with affiliate opportunity scores. Equipment items receive higher affiliate scores (10% commission). Returns top opportunities sorted by affiliate score.",
+    "Generate a ranked affiliate shopping list for a recipe, scoring each ingredient and piece of equipment by affiliate revenue potential. Equipment scores highest (10% commission via Amazon Associates). Returns ingredients and gear sorted by affiliate score with price range and commission estimate per item. Use for recipe blog monetization, cooking channel affiliate strategy, and shoppable content generation. Accepts ingredient list or recipe_id from extract_recipe_ingredients.",
     {
       recipe_name: z
         .string()
         .min(1)
+        .max(RECIPE_NAME_MAX)
         .describe("Recipe name (e.g. 'Beef Bourguignon', 'Chocolate Chip Cookies')"),
       ingredients: z
         .array(
           z.object({
-            name: z.string().min(1),
-            quantity: z.string().optional(),
+            name: z.string().min(1).max(INGREDIENT_NAME_MAX),
+            quantity: z.string().max(INGREDIENT_QUANTITY_MAX).optional(),
             unit: z.string().optional(),
             category: z
               .enum(["pantry", "fresh", "dairy", "meat", "seafood", "equipment", "specialty", "other"])
@@ -358,10 +372,12 @@ export function createServer(): McpServer {
         .describe("Ingredient list. Provide this OR recipe_id."),
       recipe_id: z
         .string()
+        .max(ID_MAX_CHARS)
         .optional()
         .describe("Recipe ID from a prior extraction — loads from cache."),
       api_key: z
         .string()
+        .max(API_KEY_MAX_CHARS)
         .optional()
         .describe("Optional API key for paid access beyond the free tier"),
     },
