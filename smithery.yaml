@@ -1,0 +1,72 @@
+# Smithery listing for recipe-commerce-mcp
+# Place this as smithery.yaml in the package root before publishing to Smithery
+# GitHub repo: create with `gh repo create teamsincetoday/recipe-commerce-mcp --public`
+# Update github link below once repo is live.
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - openaiApiKey
+    properties:
+      openaiApiKey:
+        type: string
+        description: OpenAI API key for GPT-4o-mini ingredient and brand extraction
+      apiKeys:
+        type: string
+        description: Comma-separated paid API keys (unlocks unlimited calls)
+      cacheDir:
+        type: string
+        description: SQLite cache path (default ./data/cache.db)
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["recipe-commerce-mcp"],
+      env: {
+        OPENAI_API_KEY: config.openaiApiKey,
+        MCP_API_KEYS: config.apiKeys ?? "",
+        CACHE_DIR: config.cacheDir ?? "./data/cache.db",
+      }
+    })
+
+# --- Smithery Marketplace Metadata ---
+# (These fields are configured via the Smithery web UI, not this file)
+# name: recipe-commerce-mcp
+# display_name: Recipe Commerce Intelligence
+# tagline: Shoppable recipe generation and ingredient affiliate signals for agents
+# description: |
+#   Give it a recipe URL or text.
+#   It returns a shoppable ingredient and equipment list with affiliate network match
+#   and brand context — ready for automated affiliate link resolution.
+#
+#   3 MCP tools for recipe commerce intelligence:
+#   - extract_products: Extract branded ingredients and cooking equipment from recipe content
+#     with affiliate network match (Amazon Associates, ShareASale, Awin), commission rates,
+#     price ranges, and brand context
+#   - analyze_recipe: Full shoppable recipe commerce intelligence — brands, affiliate signals,
+#     product context, and ingredient-to-affiliate scoring
+#   - track_product_trends: Track branded product trends across recipe collections
+#     (shoppable recipe generation, brand frequency analysis)
+#
+#   First-mover in recipe commerce intelligence for MCP.
+#   Compatible with Cursor Automations and GitHub Agentic Workflows.
+#
+#   Free tier: 200 extracts/day. Paid: $0.001/call with API key.
+#
+# categories:
+#   - commerce
+#   - recipe-intelligence
+#   - content-extraction
+#   - affiliate-marketing
+#   - food
+#
+# pricing:
+#   model: freemium
+#   free_tier: 200 calls/day per agent
+#   paid_tier: $0.001 per call (API key auth)
+#
+# links:
+#   npm: https://www.npmjs.com/package/recipe-commerce-mcp
+#   github: https://github.com/teamsincetoday/recipe-commerce-mcp
+#   homepage: https://sincetoday.com
