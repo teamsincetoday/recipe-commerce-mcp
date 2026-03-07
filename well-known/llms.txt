@@ -1,0 +1,40 @@
+# recipe-commerce-mcp
+
+MCP server for recipe commerce intelligence. Extracts ingredients from cooking video transcripts and matches them to affiliate products on Amazon, Instacart, Williams-Sonoma, and Thrive Market.
+
+## Tools
+
+### extract_recipe_ingredients
+- Input: transcript text or YouTube URL (up to 100,000 chars), optional recipe_id for caching
+- Output: {result: {recipeName, ingredients [{name, quantity, unit, category, optional}], equipment [{name, category, requiredForRecipe}], techniques, cuisineType, difficulty}, _meta}
+- Typical output: 400-700 tokens (scales with recipe complexity)
+- Latency: 2-4 seconds (OpenAI GPT-4o-mini)
+- Price: free for first 200 calls/day, $0.001/call with API key
+- Supports: YouTube URLs, Substack, plain transcript text
+
+### match_ingredients_to_products
+- Input: ingredients array OR recipe_id from prior extraction
+- Output: products array [{ingredient, productName, category, affiliateProgram, estimatedPrice {min, max, currency}, commissionRate, affiliateScore, substitutes}], ingredient_count
+- Typical output: 800-1500 tokens (scales with ingredient count)
+- Latency: <100ms (local computation, no OpenAI call)
+- Affiliate programs: amazon_associates, williams_sonoma, thrive_market, instacart
+
+### suggest_affiliate_products
+- Input: recipe_name (required), ingredients array OR recipe_id
+- Output: {recipeName, products sorted by affiliateScore desc, totalEstimatedCost {min, max}}
+- Typical output: 1000-2000 tokens (scales with ingredient count)
+- Latency: <100ms (local computation, no OpenAI call)
+- Use case: generate a ranked affiliate shopping list for video descriptions and blog posts
+
+## Ingredient Categories
+pantry, fresh, dairy, meat, seafood, equipment, specialty, other
+
+## Commission Rates by Category
+- equipment: 10% (Williams-Sonoma, Amazon Associates)
+- specialty: 7% (Thrive Market)
+- pantry/seafood: 4% (Amazon Associates)
+- dairy/meat/other: 3%
+- fresh: 2% (Instacart)
+
+## Auth
+Set MCP_API_KEYS=your-key in your MCP config for paid access. Free tier: 200 calls/day, no key required.

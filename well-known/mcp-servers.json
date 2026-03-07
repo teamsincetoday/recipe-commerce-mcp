@@ -1,0 +1,42 @@
+{
+  "servers": [
+    {
+      "name": "recipe-commerce-intelligence",
+      "version": "0.1.0",
+      "description": "Extract ingredients and equipment from cooking video transcripts (YouTube URLs or raw text). Match ingredients to affiliate products on Amazon Associates, Williams-Sonoma, Instacart, and Thrive Market. Build ranked shopping lists by affiliate revenue potential.",
+      "transport": "streamable-http",
+      "auth": {
+        "type": "free-tier",
+        "free_calls_per_day": 200,
+        "paid_method": "api_key",
+        "price_per_call_usd": 0.001
+      },
+      "tools": [
+        {
+          "name": "extract_recipe_ingredients",
+          "description": "Extract recipe name, ingredients (with quantity and unit), equipment, techniques, and cuisine type from a cooking video transcript.",
+          "input_tokens_typical": 8000,
+          "output_tokens_typical": 500,
+          "latency_ms_typical": 2500,
+          "requires_openai": true
+        },
+        {
+          "name": "match_ingredients_to_products",
+          "description": "Match extracted ingredients to purchasable products with affiliate program, price range, commission rate, and substitutes.",
+          "input_tokens_typical": 50,
+          "output_tokens_typical": 900,
+          "latency_ms_typical": 50,
+          "requires_openai": false
+        },
+        {
+          "name": "suggest_affiliate_products",
+          "description": "Build a ranked affiliate shopping list for a recipe, sorted by affiliate revenue potential. Equipment scores highest (Williams-Sonoma, 10% commission).",
+          "input_tokens_typical": 50,
+          "output_tokens_typical": 900,
+          "latency_ms_typical": 50,
+          "requires_openai": false
+        }
+      ]
+    }
+  ]
+}
