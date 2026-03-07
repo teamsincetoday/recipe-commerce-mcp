@@ -253,23 +253,4 @@ describe("input validation edge cases", () => {
     expect(matches[0]?.commissionRate).toBe(0.07);
   });
 
-  it("buildShoppingList with only low-score items has empty topAffiliateOpportunities", async () => {
-    const { buildShoppingList } = await import("../src/extractor.js");
-
-    const lowScoreProducts = [
-      {
-        ingredient: "tomato",
-        productName: "Tomato",
-        category: "fresh" as const,
-        affiliateProgram: "instacart" as const,
-        estimatedPrice: { min: 1, max: 3, currency: "USD" as const },
-        commissionRate: 0.02,
-        affiliateScore: 0.05,
-        substitutes: [],
-      },
-    ];
-
-    const list = buildShoppingList("Simple Salad", lowScoreProducts);
-    expect(list.topAffiliateOpportunities).toHaveLength(0);
-  });
 });

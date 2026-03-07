@@ -91,7 +91,6 @@ export interface ShoppingList {
     min: number;
     max: number;
   };
-  topAffiliateOpportunities: ProductMatch[];
 }
 
 // ============================================================================

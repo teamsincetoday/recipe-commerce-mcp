@@ -337,28 +337,6 @@ describe("buildShoppingList", () => {
     expect(list.totalEstimatedCost.max).toBe(13);
   });
 
-  it("top affiliate opportunities has score >= 0.3", () => {
-    const products = [
-      makeMatch("skillet", 0.8, 50, 150),
-      makeMatch("flour", 0.1, 2, 5),
-      makeMatch("specialty oil", 0.5, 15, 35),
-    ];
-
-    const list = buildShoppingList("Test Recipe", products);
-    for (const p of list.topAffiliateOpportunities) {
-      expect(p.affiliateScore).toBeGreaterThanOrEqual(0.3);
-    }
-  });
-
-  it("top affiliate opportunities capped at 5", () => {
-    const products = Array.from({ length: 10 }, (_, i) =>
-      makeMatch(`item-${i}`, 0.5 + i * 0.01, 10, 20)
-    );
-
-    const list = buildShoppingList("Test Recipe", products);
-    expect(list.topAffiliateOpportunities.length).toBeLessThanOrEqual(5);
-  });
-
   it("returns empty products for empty ingredient list", () => {
     const list = buildShoppingList("Empty Recipe", []);
     expect(list.products).toHaveLength(0);

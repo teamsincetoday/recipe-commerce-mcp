@@ -420,16 +420,10 @@ export function buildShoppingList(
   const totalMin = products.reduce((sum, p) => sum + p.estimatedPrice.min, 0);
   const totalMax = products.reduce((sum, p) => sum + p.estimatedPrice.max, 0);
 
-  // Top affiliate opportunities: score >= 0.3, max 5
-  const topAffiliateOpportunities = sorted
-    .filter((p) => p.affiliateScore >= 0.3)
-    .slice(0, 5);
-
   return {
     recipeName,
     products: sorted,
     totalEstimatedCost: { min: totalMin, max: totalMax },
-    topAffiliateOpportunities,
   };
 }
 
