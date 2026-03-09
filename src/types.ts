@@ -77,7 +77,7 @@ export interface ProductMatch {
   };
   commissionRate: number;
   affiliateScore: number;
-  substitutes: string[];
+  substitutes?: string[];
 }
 
 // ============================================================================

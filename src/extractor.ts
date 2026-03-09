@@ -384,7 +384,7 @@ export function computeProductMatches(ingredients: Ingredient[]): ProductMatch[]
     const rawScore = commissionRate * (priceMid / 20); // normalize around $20 midpoint
     const affiliateScore = Math.min(Math.max(rawScore, 0), 1);
 
-    // Build substitutes list (simple category-based suggestions)
+    // Build substitutes list (simple category-based suggestions) — omit when empty
     const substitutes = buildSubstitutes(ingredient.name, category);
 
     const match: ProductMatch = {
@@ -399,7 +399,7 @@ export function computeProductMatches(ingredients: Ingredient[]): ProductMatch[]
       },
       commissionRate,
       affiliateScore: Math.round(affiliateScore * 100) / 100,
-      substitutes,
+      ...(substitutes.length > 0 ? { substitutes } : {}),
     };
 
     return match;
