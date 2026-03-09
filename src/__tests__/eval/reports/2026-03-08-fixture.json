@@ -1,0 +1,177 @@
+{
+  "timestamp": "2026-03-08T00:47:05.320Z",
+  "mode": "fixture",
+  "results": [
+    {
+      "caseId": "beef-bourguignon",
+      "caseName": "Beef Bourguignon — Classic French Braise",
+      "timestamp": "2026-03-08T00:47:05.315Z",
+      "mode": "fixture",
+      "scores": [
+        {
+          "dimension": "accuracy",
+          "score": 0,
+          "target": 80,
+          "weight": 0.4,
+          "details": "F1=0. (P=0, R=0). Req.ingredients: 0/4. Req.equipment: 0/1. Found: 11 ingredients, 2 equipment",
+          "passed": false
+        },
+        {
+          "dimension": "value",
+          "score": 100,
+          "target": 70,
+          "weight": 0.35,
+          "details": "ingredients=11 ✓, equipment=2 ✓, techniques=2 ✓, difficulty=medium ✓",
+          "passed": true
+        },
+        {
+          "dimension": "cost",
+          "score": 100,
+          "target": 80,
+          "weight": 0.25,
+          "details": "cost=$0.00100 (budget=$0.0100) ✓",
+          "passed": true
+        }
+      ],
+      "overallScore": 60,
+      "passed": false,
+      "durationMs": 0,
+      "metrics": {
+        "ingredient_count": 11,
+        "equipment_count": 2,
+        "latency_ms": 0,
+        "cost_usd": 0.001,
+        "required_ingredient_recall": 0,
+        "required_equipment_recall": 0,
+        "f1": 0
+      }
+    },
+    {
+      "caseId": "chocolate-layer-cake",
+      "caseName": "Chocolate Layer Cake — Baking Recipe",
+      "timestamp": "2026-03-08T00:47:05.317Z",
+      "mode": "fixture",
+      "scores": [
+        {
+          "dimension": "accuracy",
+          "score": 0,
+          "target": 80,
+          "weight": 0.4,
+          "details": "F1=0. (P=0, R=0). Req.ingredients: 0/4. Req.equipment: 0/1. Found: 8 ingredients, 2 equipment",
+          "passed": false
+        },
+        {
+          "dimension": "value",
+          "score": 100,
+          "target": 70,
+          "weight": 0.35,
+          "details": "ingredients=8 ✓, equipment=2 ✓, techniques=2 ✓, difficulty=medium ✓",
+          "passed": true
+        },
+        {
+          "dimension": "cost",
+          "score": 100,
+          "target": 80,
+          "weight": 0.25,
+          "details": "cost=$0.00100 (budget=$0.0100) ✓",
+          "passed": true
+        }
+      ],
+      "overallScore": 60,
+      "passed": false,
+      "durationMs": 0,
+      "metrics": {
+        "ingredient_count": 8,
+        "equipment_count": 2,
+        "latency_ms": 0,
+        "cost_usd": 0.001,
+        "required_ingredient_recall": 0,
+        "required_equipment_recall": 0,
+        "f1": 0
+      }
+    },
+    {
+      "caseId": "pasta-carbonara",
+      "caseName": "Pasta Carbonara — Roman Classic",
+      "timestamp": "2026-03-08T00:47:05.318Z",
+      "mode": "fixture",
+      "scores": [
+        {
+          "dimension": "accuracy",
+          "score": 25,
+          "target": 80,
+          "weight": 0.4,
+          "details": "F1=0. (P=0, R=0). Req.ingredients: 0/4. Req.equipment: 1/1. Found: 5 ingredients, 2 equipment",
+          "passed": false
+        },
+        {
+          "dimension": "value",
+          "score": 100,
+          "target": 70,
+          "weight": 0.35,
+          "details": "ingredients=5 ✓, equipment=2 ✓, techniques=2 ✓, difficulty=medium ✓",
+          "passed": true
+        },
+        {
+          "dimension": "cost",
+          "score": 100,
+          "target": 80,
+          "weight": 0.25,
+          "details": "cost=$0.00100 (budget=$0.0100) ✓",
+          "passed": true
+        }
+      ],
+      "overallScore": 70,
+      "passed": false,
+      "durationMs": 0,
+      "metrics": {
+        "ingredient_count": 5,
+        "equipment_count": 2,
+        "latency_ms": 0,
+        "cost_usd": 0.001,
+        "required_ingredient_recall": 0,
+        "required_equipment_recall": 1,
+        "f1": 0
+      }
+    }
+  ],
+  "summary": {
+    "totalCases": 3,
+    "passed": 0,
+    "failed": 3,
+    "overallScore": 63,
+    "dimensionAverages": {
+      "accuracy": 8,
+      "value": 100,
+      "cost": 100
+    }
+  },
+  "aggregatedMetrics": {
+    "avg_entity_count": 8,
+    "avg_latency_ms": 0,
+    "avg_cost_usd": 0.001,
+    "avg_f1": 0,
+    "avg_ingredient_count": 8,
+    "avg_equipment_count": 2
+  },
+  "priorities": [
+    {
+      "dimension": "accuracy (Beef Bourguignon — Classic French Braise)",
+      "gap": 80,
+      "weightedGap": 32,
+      "suggestion": "Improve extraction prompt — add examples of ingredient names and equipment"
+    },
+    {
+      "dimension": "accuracy (Chocolate Layer Cake — Baking Recipe)",
+      "gap": 80,
+      "weightedGap": 32,
+      "suggestion": "Improve extraction prompt — add examples of ingredient names and equipment"
+    },
+    {
+      "dimension": "accuracy (Pasta Carbonara — Roman Classic)",
+      "gap": 55,
+      "weightedGap": 22,
+      "suggestion": "Improve extraction prompt — add examples of ingredient names and equipment"
+    }
+  ]
+}

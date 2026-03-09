@@ -1,0 +1,165 @@
+{
+  "timestamp": "2026-03-08T02:42:08.826Z",
+  "mode": "live",
+  "results": [
+    {
+      "caseId": "beef-bourguignon",
+      "caseName": "Beef Bourguignon — Classic French Braise",
+      "timestamp": "2026-03-08T02:41:55.935Z",
+      "mode": "live",
+      "scores": [
+        {
+          "dimension": "accuracy",
+          "score": 89,
+          "target": 80,
+          "weight": 0.4,
+          "details": "F1=85. (P=73, R=100). Req.ingredients: 4/4. Req.equipment: 1/1. Found: 15 ingredients, 2 equipment",
+          "passed": true
+        },
+        {
+          "dimension": "value",
+          "score": 100,
+          "target": 70,
+          "weight": 0.35,
+          "details": "ingredients=15 ✓, equipment=2 ✓, techniques=3 ✓, difficulty=medium ✓",
+          "passed": true
+        },
+        {
+          "dimension": "cost",
+          "score": 100,
+          "target": 80,
+          "weight": 0.25,
+          "details": "cost=$0.00042 (budget=$0.0100) ✓",
+          "passed": true
+        }
+      ],
+      "overallScore": 96,
+      "passed": true,
+      "durationMs": 8278,
+      "metrics": {
+        "ingredient_count": 15,
+        "equipment_count": 2,
+        "latency_ms": 8278,
+        "cost_usd": 0.00041999999999999996,
+        "required_ingredient_recall": 1,
+        "required_equipment_recall": 1,
+        "f1": 0.85
+      }
+    },
+    {
+      "caseId": "chocolate-layer-cake",
+      "caseName": "Chocolate Layer Cake — Baking Recipe",
+      "timestamp": "2026-03-08T02:42:04.343Z",
+      "mode": "live",
+      "scores": [
+        {
+          "dimension": "accuracy",
+          "score": 67,
+          "target": 80,
+          "weight": 0.4,
+          "details": "F1=89. (P=80, R=100). Req.ingredients: 4/4. Req.equipment: 0/1. Found: 10 ingredients, 4 equipment",
+          "passed": false
+        },
+        {
+          "dimension": "value",
+          "score": 100,
+          "target": 70,
+          "weight": 0.35,
+          "details": "ingredients=10 ✓, equipment=4 ✓, techniques=4 ✓, difficulty=medium ✓",
+          "passed": true
+        },
+        {
+          "dimension": "cost",
+          "score": 100,
+          "target": 80,
+          "weight": 0.25,
+          "details": "cost=$0.00038 (budget=$0.0100) ✓",
+          "passed": true
+        }
+      ],
+      "overallScore": 87,
+      "passed": false,
+      "durationMs": 8406,
+      "metrics": {
+        "ingredient_count": 10,
+        "equipment_count": 4,
+        "latency_ms": 8406,
+        "cost_usd": 0.00038205,
+        "required_ingredient_recall": 1,
+        "required_equipment_recall": 0,
+        "f1": 0.89
+      }
+    },
+    {
+      "caseId": "pasta-carbonara",
+      "caseName": "Pasta Carbonara — Roman Classic",
+      "timestamp": "2026-03-08T02:42:08.823Z",
+      "mode": "live",
+      "scores": [
+        {
+          "dimension": "accuracy",
+          "score": 93,
+          "target": 80,
+          "weight": 0.4,
+          "details": "F1=91. (P=83, R=100). Req.ingredients: 4/4. Req.equipment: 1/1. Found: 6 ingredients, 2 equipment",
+          "passed": true
+        },
+        {
+          "dimension": "value",
+          "score": 100,
+          "target": 70,
+          "weight": 0.35,
+          "details": "ingredients=6 ✓, equipment=2 ✓, techniques=4 ✓, difficulty=medium ✓",
+          "passed": true
+        },
+        {
+          "dimension": "cost",
+          "score": 100,
+          "target": 80,
+          "weight": 0.25,
+          "details": "cost=$0.00030 (budget=$0.0100) ✓",
+          "passed": true
+        }
+      ],
+      "overallScore": 97,
+      "passed": true,
+      "durationMs": 4478,
+      "metrics": {
+        "ingredient_count": 6,
+        "equipment_count": 2,
+        "latency_ms": 4478,
+        "cost_usd": 0.00030015,
+        "required_ingredient_recall": 1,
+        "required_equipment_recall": 1,
+        "f1": 0.91
+      }
+    }
+  ],
+  "summary": {
+    "totalCases": 3,
+    "passed": 2,
+    "failed": 1,
+    "overallScore": 93,
+    "dimensionAverages": {
+      "accuracy": 83,
+      "value": 100,
+      "cost": 100
+    }
+  },
+  "aggregatedMetrics": {
+    "avg_entity_count": 10,
+    "avg_latency_ms": 7054,
+    "avg_cost_usd": 0.00036739999999999993,
+    "avg_f1": 0.88,
+    "avg_ingredient_count": 10,
+    "avg_equipment_count": 3
+  },
+  "priorities": [
+    {
+      "dimension": "accuracy (Chocolate Layer Cake — Baking Recipe)",
+      "gap": 13,
+      "weightedGap": 5.2,
+      "suggestion": "Improve extraction prompt — add examples of ingredient names and equipment"
+    }
+  ]
+}
