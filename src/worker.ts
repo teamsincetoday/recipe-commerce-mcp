@@ -615,6 +615,89 @@ function createMcpServer(env: Env, request: Request, ctx: ExecutionContext): Mcp
 }
 
 // ============================================================================
+// DISCOVERY CONTENT (agent-readable examples + LLM tool docs)
+// ============================================================================
+
+const LLMS_TXT = `# recipe-commerce-mcp
+
+MCP server for recipe commerce intelligence. Extracts ingredients from cooking video transcripts and matches them to affiliate products on Amazon, Instacart, Williams-Sonoma, and Thrive Market.
+
+## Tools
+
+### extract_recipe_ingredients
+- Input: transcript text or YouTube URL (up to 100,000 chars), optional recipe_id for caching
+- Output: {result: {recipeName, ingredients [{name, quantity, unit, category, optional}], equipment [{name, category, requiredForRecipe}], techniques, cuisineType, difficulty}, _meta}
+- Typical output: 400-700 tokens (scales with recipe complexity)
+- Latency: 2-4 seconds (OpenAI GPT-4o-mini)
+- Price: free for first 200 calls/day, $0.001/call with API key
+- Supports: YouTube URLs, Substack, plain transcript text
+
+### match_ingredients_to_products
+- Input: ingredients array OR recipe_id from prior extraction
+- Output: products array [{ingredient, productName, category, affiliateProgram, estimatedPrice {min, max, currency}, commissionRate, affiliateScore, substitutes}], ingredient_count
+- Typical output: 800-1500 tokens (scales with ingredient count)
+- Latency: <100ms (local computation, no OpenAI call)
+- Affiliate programs: amazon_associates, williams_sonoma, thrive_market, instacart
+
+### suggest_affiliate_products
+- Input: recipe_name (required), ingredients array OR recipe_id
+- Output: {recipeName, products sorted by affiliateScore desc, totalEstimatedCost {min, max}}
+- Typical output: 1000-2000 tokens (scales with ingredient count)
+- Latency: <100ms (local computation, no OpenAI call)
+- Use case: generate a ranked affiliate shopping list for video descriptions and blog posts
+
+## Ingredient Categories
+pantry, fresh, dairy, meat, seafood, equipment, specialty, other
+
+## Commission Rates by Category
+- equipment: 10% (Williams-Sonoma, Amazon Associates)
+- specialty: 7% (Thrive Market)
+- pantry/seafood: 4% (Amazon Associates)
+- dairy/meat/other: 3%
+- fresh: 2% (Instacart)
+
+## Auth
+Set MCP_API_KEYS=your-key in your MCP config for paid access. Free tier: 200 calls/day, no key required.`;
+
+function getExamplesResponse() {
+  return {
+    mcp: "recipe-commerce-mcp",
+    version: SERVER_VERSION,
+    examples: [
+      {
+        tool: "extract_recipe_ingredients",
+        description: "Extract recipe name, ingredient list (with quantity/unit/category), equipment, and cooking technique tags from a cooking video transcript or YouTube URL. Uses GPT-4o-mini. Results are cached by recipe_id for downstream tools.",
+        input: {
+          transcript: "Welcome back — today we're making my classic beef bourguignon. You'll need 2 lbs of beef chuck, cut into 2-inch cubes. Then we have a bottle of good Burgundy wine — don't use cooking wine, use something you'd drink. Two tablespoons of tomato paste, a pound of cremini mushrooms, and six slices of thick-cut bacon. For equipment you'll absolutely need a Dutch oven — this is non-negotiable. I'm using my Le Creuset 5.5-quart today...",
+          recipe_id: "beef-bourguignon-ep-47",
+        },
+        output: {
+          result: {
+            recipeName: "Beef Bourguignon",
+            ingredients: [
+              { name: "beef chuck", quantity: "2", unit: "lbs", category: "meat", optional: false },
+              { name: "Burgundy wine", quantity: "1", unit: "bottle", category: "pantry", optional: false },
+              { name: "tomato paste", quantity: "2", unit: "tablespoons", category: "pantry", optional: false },
+              { name: "cremini mushrooms", quantity: "1", unit: "lb", category: "fresh", optional: false },
+              { name: "thick-cut bacon", quantity: "6", unit: "slices", category: "meat", optional: false },
+            ],
+            equipment: [
+              { name: "Le Creuset Dutch oven 5.5qt", category: "cookware", requiredForRecipe: true },
+            ],
+            techniques: ["braising", "searing", "deglazing"],
+            cuisineType: "French",
+            difficulty: "medium",
+          },
+          _meta: { processing_time_ms: 1950, ai_cost_usd: 0.0024, cache_hit: false, recipe_id: "beef-bourguignon-ep-47" },
+        },
+        value_narrative: "Le Creuset 5.5qt Dutch oven requiredForRecipe: true — highest-value affiliate opportunity. Retails at $400+. At 10% commission = $40/conversion. Link in description, pin in comments. Burgundy wine: most cooking channels don't monetise wine. Wine.com, Vivino, Naked Wines all have affiliate programs. Run match_ingredients_to_products with this recipe_id to get full affiliate scoring across all ingredients without re-processing.",
+        eval: { F1: 0.88, latency_ms: 7054, cost_usd: 0.000370 },
+      },
+    ],
+  };
+}
+
+// ============================================================================
 // WORKER ENTRY POINT
 // ============================================================================
 
@@ -649,6 +732,20 @@ export default {
         JSON.stringify({ tools: summaries, as_of: new Date().toISOString() }),
         { headers: { "Content-Type": "application/json", ...CORS_HEADERS } }
       );
+    }
+
+    // Agent discovery: real-output examples (no auth required)
+    if (url.pathname === "/examples" && request.method === "GET") {
+      return new Response(JSON.stringify(getExamplesResponse()), {
+        headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+      });
+    }
+
+    // Agent discovery: LLM-readable tool docs (no auth required)
+    if (url.pathname === "/.well-known/llms.txt" && request.method === "GET") {
+      return new Response(LLMS_TXT, {
+        headers: { "Content-Type": "text/plain; charset=utf-8", ...CORS_HEADERS },
+      });
     }
 
     // MCP Streamable HTTP endpoint (stateless)
