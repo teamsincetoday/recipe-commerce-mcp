@@ -1,0 +1,25 @@
+name = "recipe-commerce-mcp"
+main = "src/worker.ts"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Payment disabled by default — enable when x402 Cloudflare integration is ready
+[vars]
+PAYMENT_ENABLED = "false"
+
+# KV Namespaces — created 2026-03-07
+[[kv_namespaces]]
+binding = "RECIPE_CACHE"
+id = "b92a0eb158334d4990d915f567d675a9"
+
+[[kv_namespaces]]
+binding = "RATE_LIMITS"
+id = "7ba2a41aac5f4b488cb72845d0761cf4"
+
+[[kv_namespaces]]
+binding = "TELEMETRY"
+id = "a3fcce952bf54ab7b63813aea97886e3"
+
+# Secrets — set with:
+#   wrangler secret put OPENAI_API_KEY
+#   wrangler secret put MCP_API_KEYS   (comma-separated list of valid keys)
