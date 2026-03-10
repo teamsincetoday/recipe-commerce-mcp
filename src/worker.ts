@@ -180,18 +180,28 @@ function paymentRequiredResult(reason: string) {
       {
         type: "text" as const,
         text: JSON.stringify({
-          error: "payment_required",
+          error: "rate_limit_exceeded",
           message: reason,
           price_usd: TOOL_PRICE_USD,
           free_tier_limit: FREE_TIER_DAILY_LIMIT,
           reset_at: resetAt,
-          upgrade: {
-            pay_per_call: { method: "x402", price_usd: TOOL_PRICE_USD, doc: "https://x402.org" },
-            api_key: { method: "api_key", param: "api_key", contact: "team@sincetoday.com" },
+          options: {
+            pay_per_call: {
+              method: "x402 micropayments",
+              price_usd: TOOL_PRICE_USD,
+              setup: "Add STABLECOIN_ADDRESS env var — no account needed",
+              doc: "https://x402.org",
+            },
+            api_key: {
+              method: "api_key",
+              param: "api_key",
+              contact: "team@sincetoday.com",
+            },
             enterprise: {
-              method: "enterprise",
-              description:
-                "Custom rate limits, private registry, SLA. Contact team@sincetoday.com.",
+              description: "Building at scale? Custom rate limits, white-label endpoints, SLA guarantees, and custom extraction schemas.",
+              contact: "team@sincetoday.com",
+              subject_line: "Enterprise MCP — [your use case]",
+              response_time: "Same business day",
             },
           },
         }),
