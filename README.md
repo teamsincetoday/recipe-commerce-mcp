@@ -95,6 +95,34 @@ Returns affiliate program details (Amazon Associates, ShareASale, Awin), price r
 
 Returns ingredients and equipment ranked by affiliate revenue score. Equipment scores highest (10% commission via Amazon Associates).
 
+## Example Output
+
+Real extraction from a Serious Eats beef bourguignon recipe (eval score: **F1=0.88**, $0.000370/call, 7054ms):
+
+```json
+{
+  "recipe_id": "serious-eats-beef-bourguignon",
+  "ingredients": [
+    {
+      "name": "Dutch oven (5.5 qt)",
+      "category": "equipment",
+      "affiliate_revenue_score": 0.92,
+      "amazon_search_terms": ["dutch oven 5.5 quart", "Le Creuset 5.5 qt"],
+      "estimated_commission_usd": 8.50
+    },
+    {
+      "name": "beef chuck",
+      "category": "ingredient",
+      "affiliate_revenue_score": 0.12,
+      "amazon_search_terms": null,
+      "estimated_commission_usd": null
+    }
+  ]
+}
+```
+
+See `/examples` endpoint for full output with value narrative: `https://recipe-commerce-mcp.sincetoday.workers.dev/examples`
+
 ## Pricing
 
 - Free tier: 200 calls/day per agent (no API key required)
