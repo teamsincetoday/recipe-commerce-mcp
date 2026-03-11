@@ -126,7 +126,7 @@ See `/examples` endpoint for full output with value narrative: `https://recipe-c
 ## Pricing
 
 - Free tier: 200 calls/day per agent (no API key required)
-- Paid: $0.001/call — set `MCP_API_KEYS` with valid keys
+- Paid: $0.01/call — set `MCP_API_KEYS` with valid keys
 
 ## Environment Variables
 

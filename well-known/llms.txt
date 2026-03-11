@@ -9,7 +9,7 @@ MCP server for recipe commerce intelligence. Extracts ingredients from cooking v
 - Output: {result: {recipeName, ingredients [{name, quantity, unit, category, optional}], equipment [{name, category, requiredForRecipe}], techniques, cuisineType, difficulty}, _meta}
 - Typical output: 400-700 tokens (scales with recipe complexity)
 - Latency: 2-4 seconds (OpenAI GPT-4o-mini)
-- Price: free for first 200 calls/day, $0.001/call with API key
+- Price: free for first 200 calls/day, $0.01/call with API key
 - Supports: YouTube URLs, Substack, plain transcript text
 
 ### match_ingredients_to_products
