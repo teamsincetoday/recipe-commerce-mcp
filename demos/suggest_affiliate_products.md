@@ -1,6 +1,6 @@
 # `suggest_affiliate_products` — Example Output
 
-Build a ranked affiliate shopping list for a recipe, scoring each ingredient by revenue potential. Uses local scoring (no extra API call). Equipment, specialty items, and premium pantry goods rank highest. Sorted by `affiliateScore` descending so your highest-value links are first.
+Generate a ranked affiliate shopping list for any recipe, sorted by revenue potential. Equipment always scores highest (10% commission). Fresh produce scores lowest but adds basket value. One call gives you a ready-to-publish affiliate section.
 
 ## Example Call
 
@@ -14,82 +14,112 @@ Build a ranked affiliate shopping list for a recipe, scoring each ingredient by 
 }
 ```
 
-*Uses cached extraction from a prior `extract_recipe_ingredients` call. Loads from cache — 0 AI cost.*
+Or without a cached extraction:
+
+```json
+{
+  "tool": "suggest_affiliate_products",
+  "arguments": {
+    "recipe_name": "Chocolate Chip Cookies",
+    "ingredients": [
+      {"name": "stand mixer", "category": "equipment", "optional": false},
+      {"name": "butter", "category": "dairy", "optional": false},
+      {"name": "all-purpose flour", "category": "pantry", "optional": false},
+      {"name": "chocolate chips", "category": "pantry", "optional": false},
+      {"name": "eggs", "category": "fresh", "optional": false},
+      {"name": "vanilla extract", "category": "specialty", "optional": false}
+    ]
+  }
+}
+```
 
 ## Example Output
 
 ```json
 {
-  "recipeName": "Beef Bourguignon",
+  "recipeName": "Chocolate Chip Cookies",
   "products": [
     {
-      "ingredient": "beef chuck",
-      "productName": "Beef Chuck",
-      "category": "meat",
-      "affiliateProgram": "instacart",
-      "estimatedPrice": { "min": 8, "max": 40, "currency": "USD" },
-      "commissionRate": 0.03,
-      "affiliateScore": 0.04,
-      "substitutes": ["plant-based protein alternative"]
-    },
-    {
-      "ingredient": "thick-cut bacon",
-      "productName": "Thick-Cut Bacon",
-      "category": "meat",
-      "affiliateProgram": "instacart",
-      "estimatedPrice": { "min": 8, "max": 40, "currency": "USD" },
-      "commissionRate": 0.03,
-      "affiliateScore": 0.04,
-      "substitutes": ["plant-based protein alternative"]
-    },
-    {
-      "ingredient": "Burgundy wine",
-      "productName": "Burgundy Wine",
-      "category": "pantry",
-      "affiliateProgram": "amazon_associates",
-      "estimatedPrice": { "min": 2, "max": 15, "currency": "USD" },
-      "commissionRate": 0.04,
-      "affiliateScore": 0.02,
+      "ingredient": "stand mixer",
+      "productName": "Stand Mixer",
+      "category": "equipment",
+      "affiliateProgram": "williams_sonoma",
+      "estimatedPrice": {"min": 25, "max": 200, "currency": "USD"},
+      "commissionRate": 0.10,
+      "affiliateScore": 0.56,
       "substitutes": []
     },
     {
-      "ingredient": "tomato paste",
-      "productName": "Tomato Paste",
-      "category": "pantry",
-      "affiliateProgram": "amazon_associates",
-      "estimatedPrice": { "min": 2, "max": 15, "currency": "USD" },
-      "commissionRate": 0.04,
-      "affiliateScore": 0.02,
+      "ingredient": "vanilla extract",
+      "productName": "Vanilla Extract",
+      "category": "specialty",
+      "affiliateProgram": "thrive_market",
+      "estimatedPrice": {"min": 8, "max": 45, "currency": "USD"},
+      "commissionRate": 0.07,
+      "affiliateScore": 0.19,
       "substitutes": []
     },
     {
-      "ingredient": "cremini mushrooms",
-      "productName": "Cremini Mushrooms",
+      "ingredient": "all-purpose flour",
+      "productName": "All-purpose Flour",
+      "category": "pantry",
+      "affiliateProgram": "amazon_associates",
+      "estimatedPrice": {"min": 2, "max": 15, "currency": "USD"},
+      "commissionRate": 0.04,
+      "affiliateScore": 0.07,
+      "substitutes": ["bread flour", "gluten-free flour blend", "almond flour"]
+    },
+    {
+      "ingredient": "chocolate chips",
+      "productName": "Chocolate Chips",
+      "category": "pantry",
+      "affiliateProgram": "amazon_associates",
+      "estimatedPrice": {"min": 2, "max": 15, "currency": "USD"},
+      "commissionRate": 0.04,
+      "affiliateScore": 0.07,
+      "substitutes": []
+    },
+    {
+      "ingredient": "butter",
+      "productName": "Butter",
+      "category": "dairy",
+      "affiliateProgram": "instacart",
+      "estimatedPrice": {"min": 3, "max": 12, "currency": "USD"},
+      "commissionRate": 0.03,
+      "affiliateScore": 0.04,
+      "substitutes": ["margarine", "coconut oil", "olive oil"]
+    },
+    {
+      "ingredient": "eggs",
+      "productName": "Eggs",
       "category": "fresh",
       "affiliateProgram": "instacart",
-      "estimatedPrice": { "min": 1, "max": 8, "currency": "USD" },
+      "estimatedPrice": {"min": 1, "max": 8, "currency": "USD"},
       "commissionRate": 0.02,
-      "affiliateScore": 0.00,
-      "substitutes": ["frozen equivalent", "canned equivalent"]
+      "affiliateScore": 0.01,
+      "substitutes": ["flax egg", "chia egg", "applesauce"]
     }
   ],
-  "totalEstimatedCost": { "min": 21, "max": 118 },
+  "totalEstimatedCost": {
+    "min": 41,
+    "max": 295
+  },
   "_meta": {
     "processing_time_ms": 12,
     "ai_cost_usd": 0,
-    "cache_hit": true
+    "cache_hit": false
   }
 }
 ```
 
 ## What to do with this
 
-- **Top link: Instacart meat delivery** — beef chuck and thick-cut bacon both rank at the top. `affiliateScore: 0.04` reflects 3% commission on $8–40 basket items. Set up an Instacart affiliate link in your video description and pin it. On a recipe channel with 50k views, even 0.1% click-to-purchase converts to ~$6–12/video.
+- **`affiliateScore: 0.56` on stand mixer** — Equipment is always your lead affiliate link. A KitchenAid stand mixer at $400+ through Williams-Sonoma at 10% commission = $40/conversion. Lead with this in your video description.
+- **Products already sorted** — response is sorted by `affiliateScore` descending. Top-to-bottom = the order to list links in your description.
+- **`substitutes` on butter and flour** — Offer the gluten-free flour alternative to capture dietary-restriction viewers. Both Amazon Associates links; you earn either way.
+- **Instacart basket** — Dairy and fresh items have low individual commission ($0.10-0.20/item) but Instacart pays on the full basket. Group them into a single Instacart list for better conversion.
+- **`totalEstimatedCost: $41–$295`** — The range is wide because of equipment. For viewers who already own a stand mixer, the basket is $16–$95. Mention both in your description: "Shop ingredients ($16+) or the full setup ($295)."
 
-- **Wine monetisation is the gap** — Burgundy wine is sitting at `affiliateProgram: "amazon_associates"` but premium wine deserves better. Wine.com (8% commission), Vivino, or Naked Wines all pay more on a $25 bottle. If you manually pass wine as `category: "specialty"` the score bumps to 0.09 and the program switches to Thrive Market — or use `match_ingredients_to_products` to inspect and edit before generating the shopping list.
+## Free tier
 
-- **Equipment is the real prize** — the Dutch oven from `extract_recipe_ingredients` is stored in `equipment[]`, separate from `ingredients[]`. To include it in this shopping list, pass it explicitly with `category: "equipment"`. Le Creuset at $400 × 10% commission = $40/conversion. That's 5× the value of the meat links. Don't skip it.
-
-- **`ai_cost_usd: 0`** — this tool runs entirely local scoring. You can call it repeatedly (for different affiliate program comparisons, for variant recipes) at zero marginal cost after the initial extraction.
-
-- **Pipe to content tools** — sorted `products[]` is ready to paste into a "Shop This Recipe" description template, a Beacons.ai link page, or a Notion shopping list database for your newsletter segment.
+200 calls/day without an API key. This tool uses cached data from `extract_recipe_ingredients` — no extra OpenAI cost when called with a `recipe_id`.
