@@ -27,6 +27,13 @@ export type AffiliateProgram =
 
 export type DifficultyLevel = "easy" | "medium" | "hard";
 
+export interface AestheticTags {
+  warmth: "warm" | "cool" | "neutral";
+  density: "minimal" | "maximal" | "balanced";
+  origin: "natural" | "synthetic" | "mixed";
+  tradition: "traditional" | "contemporary" | "hybrid";
+}
+
 export type PaymentMethod = "disabled" | "api_key" | "free_tier";
 
 // ============================================================================
@@ -58,6 +65,7 @@ export interface ExtractionResult {
   techniques: string[];
   cuisineType?: string;
   difficulty?: DifficultyLevel;
+  aestheticTags?: AestheticTags;
 }
 
 // ============================================================================
@@ -114,6 +122,10 @@ export interface OpenAIIngredientResponse {
   techniques: string[];
   cuisine_type?: string;
   difficulty?: string;
+  aesthetic_warmth?: string;
+  aesthetic_density?: string;
+  aesthetic_origin?: string;
+  aesthetic_tradition?: string;
 }
 
 // ============================================================================

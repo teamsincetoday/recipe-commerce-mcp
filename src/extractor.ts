@@ -25,6 +25,7 @@ import type {
   AffiliateProgram,
   ShoppingList,
   DifficultyLevel,
+  AestheticTags,
 } from "./types.js";
 import { YoutubeTranscript } from "youtube-transcript";
 import { createHash } from "node:crypto";
@@ -69,6 +70,11 @@ const VALID_CATEGORIES = new Set<IngredientCategory>([
 ]);
 
 const VALID_DIFFICULTIES = new Set<DifficultyLevel>(["easy", "medium", "hard"]);
+
+const VALID_WARMTH = new Set(["warm", "cool", "neutral"]);
+const VALID_DENSITY = new Set(["minimal", "maximal", "balanced"]);
+const VALID_ORIGIN = new Set(["natural", "synthetic", "mixed"]);
+const VALID_TRADITION = new Set(["traditional", "contemporary", "hybrid"]);
 
 // ============================================================================
 // AFFILIATE SCORING DATA
@@ -143,13 +149,19 @@ Also extract:
 - cuisine_type: Cuisine style if identifiable (e.g., "Italian", "Thai") — omit if unclear
 - difficulty: "easy", "medium", or "hard" based on techniques and time — omit if unclear
 
+Also classify the overall aesthetic character of this dish:
+- aesthetic_warmth: "warm" (comforting, cozy, hearty), "cool" (fresh, light, crisp), or "neutral"
+- aesthetic_density: "minimal" (simple, few ingredients, clean), "maximal" (rich, layered, complex), or "balanced"
+- aesthetic_origin: "natural" (whole foods, seasonal, unprocessed), "synthetic" (convenience, processed, packaged), or "mixed"
+- aesthetic_tradition: "traditional" (heritage recipe, classic technique), "contemporary" (modern twist, fusion), or "hybrid"
+
 Rules:
 - Focus on specific, purchasable ingredients — not vague references
 - Include specialty/branded ingredients when named (e.g., "San Marzano tomatoes", "Maldon salt")
 - Equipment category "equipment" is reserved for the IngredientCategory type — use "cookware" etc. for equipment.category
 
 Return ONLY valid JSON (no markdown, no explanation):
-{"recipe_name":"...","ingredients":[...],"equipment":[...],"techniques":[...],"cuisine_type":"...","difficulty":"..."}`;
+{"recipe_name":"...","ingredients":[...],"equipment":[...],"techniques":[...],"cuisine_type":"...","difficulty":"...","aesthetic_warmth":"...","aesthetic_density":"...","aesthetic_origin":"...","aesthetic_tradition":"..."}`;
 
 // ============================================================================
 // YOUTUBE TRANSCRIPT RESOLVER
@@ -352,6 +364,9 @@ export async function extractRecipeIngredients(
   if (parsed.cuisine_type) result.cuisineType = parsed.cuisine_type;
   if (difficulty) result.difficulty = difficulty;
 
+  const aestheticTags = parseAestheticTags(parsed);
+  if (aestheticTags) result.aestheticTags = aestheticTags;
+
   // Estimate cost from token usage
   const usage = response.usage;
   const ai_cost_usd = usage
@@ -474,4 +489,24 @@ function buildSubstitutes(name: string, category: IngredientCategory): string[] 
   };
 
   return CATEGORY_FALLBACKS[category] ?? [];
+}
+
+/**
+ * Parse and validate aesthetic tag fields from a raw OpenAI ingredient response.
+ * Returns undefined if no valid tags present.
+ */
+function parseAestheticTags(parsed: OpenAIIngredientResponse): AestheticTags | undefined {
+  const warmth = VALID_WARMTH.has(parsed.aesthetic_warmth ?? "") ? parsed.aesthetic_warmth as AestheticTags["warmth"] : null;
+  const density = VALID_DENSITY.has(parsed.aesthetic_density ?? "") ? parsed.aesthetic_density as AestheticTags["density"] : null;
+  const origin = VALID_ORIGIN.has(parsed.aesthetic_origin ?? "") ? parsed.aesthetic_origin as AestheticTags["origin"] : null;
+  const tradition = VALID_TRADITION.has(parsed.aesthetic_tradition ?? "") ? parsed.aesthetic_tradition as AestheticTags["tradition"] : null;
+
+  if (!warmth && !density && !origin && !tradition) return undefined;
+
+  return {
+    warmth: warmth ?? "neutral",
+    density: density ?? "balanced",
+    origin: origin ?? "mixed",
+    tradition: tradition ?? "hybrid",
+  };
 }
