@@ -133,7 +133,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "extract_recipe_ingredients",
-    "Extract structured recipe data from a cooking video transcript or YouTube URL: recipe name, ingredients with quantity and unit, equipment list, and cooking technique tags. Returns a structured ingredient list ready for affiliate product matching and shopping list generation. Use for recipe monetization, cooking content commerce, and automated shoppable recipe creation. Results cached by recipe_id.",
+    "Extract structured recipe data from transcript text or YouTube URL: recipe name, ingredients with quantity and unit, equipment list, and cooking technique tags. Note: YouTube URL transcription requires yt-dlp — pass transcript text directly for reliable extraction. Returns ingredient list ready for match_ingredients_to_products and suggest_affiliate_products. Call this first — both downstream tools reuse its cache. Use for recipe monetization, shoppable recipe creation, and cooking content commerce. Example: recipe_id='chocolate-chip-cookies-v1'.",
     {
       transcript: z
         .string()
@@ -243,7 +243,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "match_ingredients_to_products",
-    "Match recipe ingredients to purchasable products on Amazon and specialty retailers. Returns affiliate program details (Amazon Associates, ShareASale, Awin), price range, commission rate (2–10%), and substitution alternatives for each ingredient. Use for recipe affiliate monetization, ingredient sourcing intelligence, and shoppable recipe generation. Accepts ingredient list directly or recipe_id from a prior extract_recipe_ingredients call.",
+    "Match recipe ingredients to purchasable products on Amazon and specialty retailers. Returns affiliate program details (Amazon Associates, ShareASale, Awin), estimated price range, estimated commission rate (2–10%), and substitution alternatives. Commission rates are benchmark estimates — not live affiliate platform data. Use this tool for ingredient-level product details and substitutions; use suggest_affiliate_products for a revenue-ranked shopping list instead. Accepts ingredient list directly or recipe_id from a prior extract_recipe_ingredients call. Use for recipe affiliate monetization and shoppable recipe generation.",
     {
       ingredients: z
         .array(
@@ -348,7 +348,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "suggest_affiliate_products",
-    "Generate a ranked affiliate shopping list for a recipe, scoring each ingredient and piece of equipment by affiliate revenue potential. Equipment scores highest (10% commission via Amazon Associates). Returns ingredients and gear sorted by affiliate score with price range and commission estimate per item. Use for recipe blog monetization, cooking channel affiliate strategy, and shoppable content generation. Accepts ingredient list or recipe_id from extract_recipe_ingredients.",
+    "Generate a revenue-ranked affiliate shopping list for a recipe, sorted by estimated commission potential. Equipment ranks highest (Amazon Associates ~10% commission). Returns items sorted by affiliate score with estimated price range and commission per item. Revenue estimates are algorithmic benchmarks — not live pricing data. Use this tool for ranked shopping lists and blog monetization strategy; use match_ingredients_to_products for ingredient-level product SKUs and substitutions. Accepts ingredient list or recipe_id from extract_recipe_ingredients. Example: recipe_name='Beef Bourguignon'.",
     {
       recipe_name: z
         .string()
