@@ -133,7 +133,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "extract_recipe_ingredients",
-    "Extract structured recipe data from transcript text or YouTube URL: recipe name, ingredients with quantity and unit, equipment list, and cooking technique tags. Note: YouTube URL transcription requires yt-dlp — pass transcript text directly for reliable extraction. Returns ingredient list ready for match_ingredients_to_products and suggest_affiliate_products. Call this first — both downstream tools reuse its cache. Use for recipe monetization, shoppable recipe creation, and cooking content commerce. Example: recipe_id='chocolate-chip-cookies-v1'.",
+    "Extract structured recipe data from transcript text or YouTube URL: recipe name, ingredients with quantity and unit, equipment list, and cooking technique tags. YouTube URL transcription requires yt-dlp installed on the server — if not available the call fails; pass raw transcript text for reliable extraction in all environments. Returns ingredient list ready for match_ingredients_to_products and suggest_affiliate_products. Call this first — both downstream tools reuse its cache. Use for recipe monetization, shoppable recipe creation, and cooking content commerce. Example: recipe_id='chocolate-chip-cookies-v1', transcript='2 cups flour...' → returns {ingredients:[{name:'flour',quantity:'2',unit:'cups',category:'pantry'},...]}.",
     {
       transcript: z
         .string()
@@ -243,7 +243,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "match_ingredients_to_products",
-    "Match recipe ingredients to purchasable products on Amazon and specialty retailers. Returns affiliate program details (Amazon Associates, ShareASale, Awin), estimated price range, estimated commission rate (2–10%), and substitution alternatives. Commission rates are benchmark estimates — not live affiliate platform data. Use this tool for ingredient-level product details and substitutions; use suggest_affiliate_products for a revenue-ranked shopping list instead. Accepts ingredient list directly or recipe_id from a prior extract_recipe_ingredients call. Use for recipe affiliate monetization and shoppable recipe generation.",
+    "Match recipe ingredients to purchasable products on Amazon and specialty retailers. Returns affiliate program details (Amazon Associates, ShareASale, Awin), estimated price range, estimated commission rate (2–10%), and substitution alternatives. Commission rates are benchmark estimates — not live affiliate platform data. Use this tool for ingredient-level product details and substitutions; use suggest_affiliate_products for a revenue-ranked shopping list instead. Accepts ingredient list directly or recipe_id from a prior extract_recipe_ingredients call. Use for recipe affiliate monetization and shoppable recipe generation. Example: recipe_id='chocolate-chip-cookies-v1' → returns [{name:'flour',product:'King Arthur All-Purpose Flour',program:'Amazon Associates',estimated_commission_pct:4}].",
     {
       ingredients: z
         .array(
