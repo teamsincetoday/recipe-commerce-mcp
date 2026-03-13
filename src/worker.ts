@@ -703,6 +703,37 @@ function getExamplesResponse() {
         value_narrative: "Le Creuset 5.5qt Dutch oven requiredForRecipe: true — highest-value affiliate opportunity. Retails at $400+. At 10% commission = $40/conversion. Link in description, pin in comments. Burgundy wine: most cooking channels don't monetise wine. Wine.com, Vivino, Naked Wines all have affiliate programs. Run match_ingredients_to_products with this recipe_id to get full affiliate scoring across all ingredients without re-processing.",
         eval: { F1: 0.88, latency_ms: 7054, cost_usd: 0.000370 },
       },
+      {
+        tool: "match_ingredients_to_products",
+        description: "Match each ingredient and piece of equipment from a cached recipe extraction to purchasable products via affiliate network lookup. Returns product_name, affiliate_network, estimated_commission_pct, and match_confidence per ingredient. Reads from cache — no re-extraction cost.",
+        input: { recipe_id: "beef-bourguignon-ep-47" },
+        output: {
+          recipe_id: "beef-bourguignon-ep-47",
+          matches: [
+            { ingredient: "Le Creuset Dutch oven 5.5qt", product_name: "Le Creuset Enameled Cast Iron Signature Round Dutch Oven, 5.5 qt.", affiliate_network: "Amazon Associates", estimated_commission_pct: 4.5, match_confidence: 0.97, affiliate_link: null },
+            { ingredient: "beef chuck", product_name: "Certified Angus Beef Chuck Roast (3lb)", affiliate_network: "Amazon Fresh", estimated_commission_pct: 3.0, match_confidence: 0.81, affiliate_link: null },
+            { ingredient: "Burgundy wine", product_name: "Louis Jadot Bourgogne Pinot Noir", affiliate_network: "Wine.com", estimated_commission_pct: 7.0, match_confidence: 0.78, affiliate_link: null },
+          ],
+          _meta: { processing_time_ms: 890, ai_cost_usd: 0.0008, cache_hit: true },
+        },
+        value_narrative: "Le Creuset match confidence 0.97, commission 4.5% on ~$400 = $18/conversion. Wine affiliate at 7% is the highest commission rate here — underexploited by most cooking channels. Run suggest_affiliate_products to get a ranked priority list across the full recipe with revenue estimates.",
+      },
+      {
+        tool: "suggest_affiliate_products",
+        description: "Return a ranked list of affiliate product opportunities for a recipe, sorted by estimated revenue per conversion (commission × average order value). Combines match_ingredients_to_products results with AOV benchmarks. Best used as the final step in the recipe monetisation workflow.",
+        input: { recipe_id: "beef-bourguignon-ep-47" },
+        output: {
+          recipe_id: "beef-bourguignon-ep-47",
+          opportunities: [
+            { product: "Le Creuset Dutch Oven 5.5qt", category: "cookware", estimated_revenue_per_conversion_usd: 18.0, affiliate_network: "Amazon Associates", priority: "high", action: "Link in video description, pin in comments, add to recipe card" },
+            { product: "Burgundy Wine (Louis Jadot)", category: "wine", estimated_revenue_per_conversion_usd: 12.5, affiliate_network: "Wine.com", priority: "high", action: "Add wine.com referral link — most cooking channels miss this" },
+            { product: "Certified Angus Beef Chuck", category: "meat", estimated_revenue_per_conversion_usd: 2.8, affiliate_network: "Amazon Fresh", priority: "medium", action: "Worth including but low conversion rate for grocery items" },
+          ],
+          total_estimated_revenue_per_view_usd: 0.043,
+          _meta: { processing_time_ms: 140, ai_cost_usd: 0, cache_hit: true },
+        },
+        value_narrative: "total_estimated_revenue_per_view: $0.043. At 100k views = $4,300 per recipe video monetised. Le Creuset + Wine.com are the priority actions — two affiliate links, potential $30+ per conversion. Most cooking channels only monetise equipment; adding Wine.com is an untapped 7% commission opportunity.",
+      },
     ],
   };
 }
