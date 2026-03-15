@@ -102,6 +102,10 @@ export const beefBourguignon: RecipeEvalCase = {
     { name: "thyme",          required: false, category: "fresh" },
     { name: "bay leaves",     required: false, category: "pantry" },
     { name: "mushrooms",      required: false, category: "fresh" },
+    { name: "salt",           required: false, category: "pantry" },
+    { name: "black pepper",   required: false, category: "pantry" },
+    { name: "oil",            required: false, category: "pantry" },
+    { name: "butter",         required: false, category: "dairy" },
   ],
   expectedEquipment: [
     { name: "Dutch oven", required: true },

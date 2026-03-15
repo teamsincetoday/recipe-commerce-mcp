@@ -93,6 +93,8 @@ export const chocolateLayerCake: RecipeEvalCase = {
     { name: "baking soda",       required: false, category: "pantry" },
     { name: "butter",            required: false, category: "dairy" },
     { name: "vanilla extract",   required: false, category: "pantry" },
+    { name: "salt",              required: false, category: "pantry" },
+    { name: "coffee",            required: false, category: "pantry" },
   ],
   expectedEquipment: [
     { name: "cake pan",       required: true },   // "9-inch" variant fails substring match; "cake pan" is the invariant
