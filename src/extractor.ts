@@ -326,6 +326,7 @@ export async function extractRecipeIngredients(
     ],
     response_format: { type: "json_object" },
     temperature: 0,
+    max_tokens: 2000,
   });
 
   const rawContent = response.choices[0]?.message?.content ?? "{}";
