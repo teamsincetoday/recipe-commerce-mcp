@@ -461,4 +461,73 @@ describe("extractRecipeIngredients (mocked OpenAI)", () => {
 
     expect(result.recipeId).toBe("my-custom-id");
   });
+
+  // EXP-2026-03-11-3: aesthetic tags coverage
+  it("attaches aestheticTags to ExtractionResult when aesthetic fields are present in response", async () => {
+    const mockClient = {
+      chat: {
+        completions: {
+          create: vi.fn().mockResolvedValue({
+            choices: [
+              {
+                message: {
+                  content: JSON.stringify({
+                    recipe_name: "Pasta Carbonara",
+                    ingredients: [],
+                    equipment: [],
+                    techniques: ["boil", "toss"],
+                    aesthetic_warmth: "warm",
+                    aesthetic_density: "maximal",
+                    aesthetic_origin: "natural",
+                    aesthetic_tradition: "traditional",
+                  }),
+                },
+              },
+            ],
+            usage: null,
+          }),
+        },
+      },
+    };
+
+    const { extractRecipeIngredients, setOpenAIClient } = await import("../src/extractor.js");
+    setOpenAIClient(mockClient as unknown as import("openai").default);
+
+    const result = await extractRecipeIngredients({ transcript: "A carbonara recipe transcript." });
+    expect(result.result.aestheticTags).toBeDefined();
+    expect(result.result.aestheticTags?.warmth).toBe("warm");
+    expect(result.result.aestheticTags?.density).toBe("maximal");
+    expect(result.result.aestheticTags?.origin).toBe("natural");
+    expect(result.result.aestheticTags?.tradition).toBe("traditional");
+  });
+
+  it("omits aestheticTags from ExtractionResult when aesthetic fields are absent in response", async () => {
+    const mockClient = {
+      chat: {
+        completions: {
+          create: vi.fn().mockResolvedValue({
+            choices: [
+              {
+                message: {
+                  content: JSON.stringify({
+                    recipe_name: "Simple Omelette",
+                    ingredients: [],
+                    equipment: [],
+                    techniques: ["whisk", "fold"],
+                  }),
+                },
+              },
+            ],
+            usage: null,
+          }),
+        },
+      },
+    };
+
+    const { extractRecipeIngredients, setOpenAIClient } = await import("../src/extractor.js");
+    setOpenAIClient(mockClient as unknown as import("openai").default);
+
+    const result = await extractRecipeIngredients({ transcript: "A simple omelette transcript." });
+    expect(result.result.aestheticTags).toBeUndefined();
+  });
 });
