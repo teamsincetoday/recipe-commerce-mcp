@@ -226,7 +226,8 @@ function createMcpServer(env: Env, request: Request, ctx: ExecutionContext): Mcp
   const metering = env.TELEMETRY ? new CloudflareMetering(env.TELEMETRY) : null;
 
   // Inject OpenAI client with env secret (Workers-safe, no process.env)
-  setOpenAIClient(new OpenAI({ apiKey: env.OPENAI_API_KEY }));
+  // 15s timeout: fail fast rather than hanging until CF 30s CPU limit (cold-start UX fix)
+  setOpenAIClient(new OpenAI({ apiKey: env.OPENAI_API_KEY, timeout: 15_000 }));
 
   const server = new McpServer({ name: SERVER_NAME, version: SERVER_VERSION });
 
@@ -809,5 +810,10 @@ export default {
     }
 
     return new Response("Not found", { status: 404, headers: CORS_HEADERS });
+  },
+
+  // Keep-warm: CF cron fires every 5 min to reduce cold-start probability.
+  async scheduled(_event: unknown, _env: Env, _ctx: ExecutionContext): Promise<void> {
+    // no-op — wrangler.toml cron trigger keeps this isolate alive
   },
 };
