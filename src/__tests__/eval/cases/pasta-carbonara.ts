@@ -2,10 +2,13 @@
  * Eval case: Pasta Carbonara — Italian classic.
  *
  * Cooking video transcript style content.
- * Ground truth: 5 core ingredients, 2 equipment items.
+ * Ground truth: 6 core ingredients, 2 equipment items.
  *
  * Required ingredients: spaghetti (pantry), guanciale/pancetta (meat),
  *                       eggs (dairy), Pecorino Romano (dairy)
+ * Optional: black pepper, egg yolks
+ *   egg yolks: recipe explicitly calls for "whole egg PLUS extra yolks"
+ *   — extractor correctly distinguishes yolks as a separate quantity spec.
  * Required equipment: large pot
  */
 
@@ -82,7 +85,7 @@ export const pastaCarbonara: RecipeEvalCase = {
   id: "pasta-carbonara",
   name: "Pasta Carbonara — Roman Classic",
   description:
-    "Authentic Roman carbonara transcript. Tests extraction of 5 classic Italian ingredients and large pot equipment detection.",
+    "Authentic Roman carbonara transcript. Tests extraction of 6 classic Italian ingredients (including egg yolks as distinct from eggs) and large pot equipment detection.",
   transcript: PASTA_CARBONARA_TRANSCRIPT,
   recipeId: "pasta-carbonara-001",
   expectedIngredients: [
@@ -91,6 +94,7 @@ export const pastaCarbonara: RecipeEvalCase = {
     { name: "eggs",            required: true,  category: "dairy" },
     { name: "Pecorino Romano", required: true,  category: "dairy" },
     { name: "black pepper",    required: false, category: "pantry" },
+    { name: "egg yolks",       required: false, category: "dairy" },
   ],
   expectedEquipment: [
     { name: "large pot",  required: true },
