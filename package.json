@@ -1,18 +1,31 @@
 {
   "name": "recipe-commerce-mcp",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Recipe Commerce Intelligence MCP Server - Extract recipes and ingredients from cooking video transcripts, match to purchasable products, and build affiliate shopping lists for agents.",
   "type": "module",
   "license": "MIT",
   "author": "Since Today Studio <team@sincetoday.com>",
-  "engines": { "node": ">=20.0.0" },
-  "bin": { "recipe-commerce-mcp": "./dist/cli.js" },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "bin": {
+    "recipe-commerce-mcp": "./dist/cli.js"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": { "import": "./dist/index.js", "types": "./dist/index.d.ts" }
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
   },
-  "files": ["dist", "data", "README.md", "LICENSE", ".env.example"],
+  "files": [
+    "dist",
+    "data",
+    "README.md",
+    "LICENSE",
+    ".env.example"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsx watch src/cli.ts",
@@ -37,5 +50,15 @@
     "typescript": "^5.7.0",
     "vitest": "^4.0.18"
   },
-  "keywords": ["mcp", "model-context-protocol", "recipe", "commerce", "ingredients", "affiliate", "cooking", "ai-agent", "agent-to-agent"]
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "recipe",
+    "commerce",
+    "ingredients",
+    "affiliate",
+    "cooking",
+    "ai-agent",
+    "agent-to-agent"
+  ]
 }
