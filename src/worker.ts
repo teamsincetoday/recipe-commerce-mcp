@@ -645,17 +645,18 @@ MCP server for recipe commerce intelligence. Extracts ingredients from cooking v
 
 ### match_ingredients_to_products
 - Input: ingredients array OR recipe_id from prior extraction
-- Output: products array [{ingredient, productName, category, affiliateProgram, estimatedPrice {min, max, currency}, commissionRate, affiliateScore, substitutes}], ingredient_count
+- Output: products array [{ingredient, productName, category, is_optional, affiliateProgram, estimatedPrice {min, max, currency}, commissionRate, affiliateScore, substitutes}], ingredient_count
 - Typical output: 800-1500 tokens (scales with ingredient count)
 - Latency: <100ms (local computation, no OpenAI call)
 - Affiliate programs: amazon_associates, williams_sonoma, thrive_market, instacart
+- Note: is_optional field distinguishes required vs optional ingredients — use to build tiered shopping lists
 
 ### suggest_affiliate_products
 - Input: recipe_name (required), ingredients array OR recipe_id
-- Output: {recipeName, products sorted by affiliateScore desc, totalEstimatedCost {min, max}}
+- Output: {recipeName, products sorted by affiliateScore desc, totalEstimatedCost {min, max}, estimatedCommission {min, max}}
 - Typical output: 1000-2000 tokens (scales with ingredient count)
 - Latency: <100ms (local computation, no OpenAI call)
-- Use case: generate a ranked affiliate shopping list for video descriptions and blog posts
+- Use case: generate a ranked affiliate shopping list for video descriptions and blog posts; estimatedCommission gives total revenue potential per recipe
 
 ## Ingredient Categories
 pantry, fresh, dairy, meat, seafood, equipment, specialty, other
