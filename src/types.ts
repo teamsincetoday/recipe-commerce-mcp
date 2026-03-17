@@ -100,6 +100,11 @@ export interface ShoppingList {
     min: number;
     max: number;
   };
+  /** Estimated affiliate commission across all products (price × commissionRate). */
+  estimatedCommission: {
+    min: number;
+    max: number;
+  };
 }
 
 // ============================================================================

@@ -437,10 +437,15 @@ export function buildShoppingList(
   const totalMin = products.reduce((sum, p) => sum + p.estimatedPrice.min, 0);
   const totalMax = products.reduce((sum, p) => sum + p.estimatedPrice.max, 0);
 
+  // Estimated affiliate commission (price × commissionRate per item)
+  const commissionMin = Math.round(products.reduce((sum, p) => sum + p.estimatedPrice.min * p.commissionRate, 0) * 100) / 100;
+  const commissionMax = Math.round(products.reduce((sum, p) => sum + p.estimatedPrice.max * p.commissionRate, 0) * 100) / 100;
+
   return {
     recipeName,
     products: sorted,
     totalEstimatedCost: { min: totalMin, max: totalMax },
+    estimatedCommission: { min: commissionMin, max: commissionMax },
   };
 }
 

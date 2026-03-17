@@ -349,6 +349,17 @@ describe("buildShoppingList", () => {
     expect(list.totalEstimatedCost.max).toBe(13);
   });
 
+  it("calculates estimated commission as price × commissionRate per item", () => {
+    const products = [
+      makeMatch("flour", 0.2, 2, 5),   // 2*0.04=0.08 min, 5*0.04=0.20 max
+      makeMatch("butter", 0.3, 4, 8),  // 4*0.04=0.16 min, 8*0.04=0.32 max
+    ];
+
+    const list = buildShoppingList("Test Recipe", products);
+    expect(list.estimatedCommission.min).toBe(0.24);
+    expect(list.estimatedCommission.max).toBe(0.52);
+  });
+
   it("returns empty products for empty ingredient list", () => {
     const list = buildShoppingList("Empty Recipe", []);
     expect(list.products).toHaveLength(0);
