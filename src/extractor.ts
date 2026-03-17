@@ -424,6 +424,20 @@ export function computeProductMatches(ingredients: Ingredient[]): ProductMatch[]
 }
 
 /**
+ * Convert equipment items into Ingredient-compatible objects for affiliate scoring.
+ * Equipment category carries the highest commission rate (10%, $25–$200 price range).
+ * Use this when loading from cache so high-value items like Dutch ovens and stand mixers
+ * are included in shopping list output alongside ingredients.
+ */
+export function equipmentToIngredients(equipment: Equipment[]): Ingredient[] {
+  return equipment.map((e) => ({
+    name: e.name,
+    category: "equipment" as IngredientCategory,
+    optional: !e.requiredForRecipe,
+  }));
+}
+
+/**
  * Build a shopping list ranked by affiliate opportunity.
  */
 export function buildShoppingList(

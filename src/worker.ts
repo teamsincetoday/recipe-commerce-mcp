@@ -27,6 +27,7 @@ import {
   computeProductMatches,
   buildShoppingList,
   normalizeIngredients,
+  equipmentToIngredients,
 } from "./extractor.js";
 import { CloudflareMetering } from "./metering-cloudflare.js";
 import type { ExtractionResult, AuthResult, Ingredient } from "./types.js";
@@ -425,7 +426,8 @@ function createMcpServer(env: Env, request: Request, ctx: ExecutionContext): Mcp
                 `Run extract_recipe_ingredients first.`
             );
           }
-          ingredients = cached.ingredients;
+          // Include equipment alongside ingredients — equipment has highest commission (10%)
+          ingredients = [...cached.ingredients, ...equipmentToIngredients(cached.equipment ?? [])];
         } else if (rawIngredients && rawIngredients.length > 0) {
           ingredients = normalizeIngredients(
             rawIngredients.map((i) => ({
@@ -557,7 +559,8 @@ function createMcpServer(env: Env, request: Request, ctx: ExecutionContext): Mcp
                 `Run extract_recipe_ingredients first.`
             );
           }
-          ingredients = cached.ingredients;
+          // Include equipment alongside ingredients — equipment has highest commission (10%)
+          ingredients = [...cached.ingredients, ...equipmentToIngredients(cached.equipment ?? [])];
         } else if (rawIngredients && rawIngredients.length > 0) {
           ingredients = normalizeIngredients(
             rawIngredients.map((i) => ({

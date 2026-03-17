@@ -2,7 +2,7 @@
  * Unit tests for extractor.ts
  *
  * Tests normalizeIngredients(), normalizeEquipment(), computeProductMatches(),
- * buildShoppingList(), and extractRecipeIngredients() (mocked OpenAI).
+ * buildShoppingList(), equipmentToIngredients(), and extractRecipeIngredients() (mocked OpenAI).
  * No real API calls.
  */
 
@@ -12,6 +12,7 @@ import {
   normalizeEquipment,
   computeProductMatches,
   buildShoppingList,
+  equipmentToIngredients,
 } from "../src/extractor.js";
 import type { Ingredient, Equipment, OpenAIIngredientResponse } from "../src/types.js";
 
@@ -365,6 +366,35 @@ describe("buildShoppingList", () => {
     expect(list.products).toHaveLength(0);
     expect(list.totalEstimatedCost.min).toBe(0);
     expect(list.totalEstimatedCost.max).toBe(0);
+  });
+});
+
+// ============================================================================
+// equipmentToIngredients
+// ============================================================================
+
+describe("equipmentToIngredients", () => {
+  it("converts required equipment to non-optional ingredient with category=equipment", () => {
+    const equipment: Equipment[] = [
+      { name: "Dutch oven", category: "cookware", requiredForRecipe: true },
+      { name: "chef's knife", category: "tool", requiredForRecipe: true },
+    ];
+    const result = equipmentToIngredients(equipment);
+    expect(result).toHaveLength(2);
+    expect(result[0]).toMatchObject({ name: "Dutch oven", category: "equipment", optional: false });
+    expect(result[1]).toMatchObject({ name: "chef's knife", category: "equipment", optional: false });
+  });
+
+  it("marks optional=true for equipment where requiredForRecipe is false", () => {
+    const equipment: Equipment[] = [
+      { name: "stand mixer", category: "appliance", requiredForRecipe: false },
+    ];
+    const result = equipmentToIngredients(equipment);
+    expect(result[0]).toMatchObject({ name: "stand mixer", category: "equipment", optional: true });
+  });
+
+  it("returns empty array for no equipment", () => {
+    expect(equipmentToIngredients([])).toEqual([]);
   });
 });
 
