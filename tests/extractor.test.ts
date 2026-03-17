@@ -291,6 +291,17 @@ describe("computeProductMatches", () => {
       expect(match?.commissionRate).toBeGreaterThan(0);
     }
   });
+
+  it("passes through is_optional from ingredient", () => {
+    const ingredients: Ingredient[] = [
+      { name: "fresh parsley", category: "fresh", optional: true },
+      { name: "olive oil", category: "pantry", optional: false },
+    ];
+
+    const matches = computeProductMatches(ingredients);
+    expect(matches.find((m) => m.ingredient === "fresh parsley")?.is_optional).toBe(true);
+    expect(matches.find((m) => m.ingredient === "olive oil")?.is_optional).toBe(false);
+  });
 });
 
 // ============================================================================
@@ -302,6 +313,7 @@ describe("buildShoppingList", () => {
     ingredient: name,
     productName: name,
     category: "pantry" as Ingredient["category"],
+    is_optional: false,
     affiliateProgram: "amazon_associates" as const,
     estimatedPrice: { min: minPrice, max: maxPrice, currency: "USD" as const },
     commissionRate: 0.04,

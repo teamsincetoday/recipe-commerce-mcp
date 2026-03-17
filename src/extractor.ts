@@ -407,6 +407,7 @@ export function computeProductMatches(ingredients: Ingredient[]): ProductMatch[]
       ingredient: ingredient.name,
       productName: toTitleCase(ingredient.name),
       category,
+      is_optional: ingredient.optional,
       affiliateProgram,
       estimatedPrice: {
         min: priceRange.min,

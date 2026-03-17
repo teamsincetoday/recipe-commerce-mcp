@@ -77,6 +77,7 @@ export interface ProductMatch {
   productName: string;
   brand?: string;
   category: IngredientCategory;
+  is_optional: boolean;
   affiliateProgram: AffiliateProgram;
   estimatedPrice: {
     min: number;
