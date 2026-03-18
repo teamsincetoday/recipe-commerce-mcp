@@ -383,6 +383,48 @@ export async function extractRecipeIngredients(
 // ============================================================================
 
 /**
+ * Common capitalized words in ingredient names that are descriptors, not brands.
+ * Used to avoid false-positive brand extraction (e.g. "Kosher salt" → no brand).
+ */
+const GENERIC_CAPS = new Set([
+  "kosher", "sea", "extra", "fresh", "whole", "ground", "dried",
+  "light", "dark", "heavy", "large", "medium", "small", "sweet",
+  "hot", "mild", "wild", "fine", "coarse", "black", "white", "red",
+  "green", "yellow", "organic", "raw", "roasted", "smoked",
+  "italian", "french", "chinese", "japanese", "thai", "mexican",
+  "spanish", "american", "greek",
+]);
+
+/**
+ * Extract a brand name from a recipe ingredient name.
+ * Returns the brand string if a proper brand can be identified, otherwise undefined.
+ *
+ * Examples:
+ *   "Maldon salt"           → "Maldon"
+ *   "San Marzano tomatoes"  → "San Marzano"
+ *   "Kikkoman soy sauce"    → "Kikkoman"
+ *   "all-purpose flour"     → undefined (no capitals)
+ *   "kosher salt"           → undefined (descriptor, not brand)
+ *   "Italian sausage"       → undefined (nationality, not brand)
+ */
+export function extractIngredientBrand(name: string): string | undefined {
+  const words = name.trim().split(/\s+/);
+  if (words.length === 0) return undefined;
+
+  const first = words[0] ?? "";
+  if (!/^[A-Z]/.test(first)) return undefined;            // all lowercase = no brand
+  if (GENERIC_CAPS.has(first.toLowerCase())) return undefined;  // descriptor not brand
+
+  // Check if second word is also a brand-like capital (two-word brand: "San Marzano")
+  const second = words[1] ?? "";
+  if (second && /^[A-Z]/.test(second) && !GENERIC_CAPS.has(second.toLowerCase())) {
+    return `${first} ${second}`;
+  }
+
+  return first;
+}
+
+/**
  * Match a list of ingredients to purchasable products with affiliate data.
  * Pure local computation — no API calls.
  */
@@ -403,9 +445,12 @@ export function computeProductMatches(ingredients: Ingredient[]): ProductMatch[]
     // Build substitutes list (simple category-based suggestions) — omit when empty
     const substitutes = buildSubstitutes(ingredient.name, category);
 
+    const brand = extractIngredientBrand(ingredient.name);
+
     const match: ProductMatch = {
       ingredient: ingredient.name,
       productName: toTitleCase(ingredient.name),
+      ...(brand ? { brand } : {}),
       category,
       is_optional: ingredient.optional,
       affiliateProgram,

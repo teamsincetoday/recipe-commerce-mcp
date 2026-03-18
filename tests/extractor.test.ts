@@ -13,6 +13,7 @@ import {
   computeProductMatches,
   buildShoppingList,
   equipmentToIngredients,
+  extractIngredientBrand,
 } from "../src/extractor.js";
 import type { Ingredient, Equipment, OpenAIIngredientResponse } from "../src/types.js";
 
@@ -395,6 +396,45 @@ describe("equipmentToIngredients", () => {
 
   it("returns empty array for no equipment", () => {
     expect(equipmentToIngredients([])).toEqual([]);
+  });
+});
+
+// ============================================================================
+// extractIngredientBrand
+// ============================================================================
+
+describe("extractIngredientBrand", () => {
+  it("extracts single-word brand from branded ingredient", () => {
+    expect(extractIngredientBrand("Maldon salt")).toBe("Maldon");
+    expect(extractIngredientBrand("Kikkoman soy sauce")).toBe("Kikkoman");
+  });
+
+  it("extracts two-word brand when both words are capitalised", () => {
+    expect(extractIngredientBrand("San Marzano tomatoes")).toBe("San Marzano");
+    expect(extractIngredientBrand("Le Creuset Dutch oven")).toBe("Le Creuset");
+  });
+
+  it("returns undefined for all-lowercase ingredient names", () => {
+    expect(extractIngredientBrand("all-purpose flour")).toBeUndefined();
+    expect(extractIngredientBrand("olive oil")).toBeUndefined();
+  });
+
+  it("returns undefined for common capitalised descriptors", () => {
+    expect(extractIngredientBrand("Kosher salt")).toBeUndefined();
+    expect(extractIngredientBrand("Italian sausage")).toBeUndefined();
+    expect(extractIngredientBrand("Fresh basil")).toBeUndefined();
+  });
+
+  it("surfaces brand in computeProductMatches output", () => {
+    const ingredients: Ingredient[] = [
+      { name: "Maldon salt", category: "pantry", optional: false },
+      { name: "olive oil", category: "pantry", optional: false },
+    ];
+    const matches = computeProductMatches(ingredients);
+    const maldon = matches.find((m) => m.ingredient === "Maldon salt");
+    const oil = matches.find((m) => m.ingredient === "olive oil");
+    expect(maldon?.brand).toBe("Maldon");
+    expect(oil?.brand).toBeUndefined();
   });
 });
 
