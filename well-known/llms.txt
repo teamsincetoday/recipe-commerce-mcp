@@ -14,7 +14,8 @@ MCP server for recipe commerce intelligence. Extracts ingredients from cooking v
 
 ### match_ingredients_to_products
 - Input: ingredients array OR recipe_id from prior extraction
-- Output: products array [{ingredient, productName, category, is_optional, affiliateProgram, estimatedPrice {min, max, currency}, commissionRate, affiliateScore, substitutes}], ingredient_count
+- Output: products array [{ingredient, productName, brand?, category, is_optional, affiliateProgram, estimatedPrice {min, max, currency}, commissionRate, affiliateScore, substitutes}], ingredient_count
+- Note: brand? identifies manufacturer from ingredient name ("San Marzano tomatoes" → brand: "San Marzano", "Maldon salt" → brand: "Maldon") — use for brand-precise affiliate and Amazon search queries
 - Note: when using recipe_id, equipment items (Dutch ovens, stand mixers, etc.) are automatically included alongside ingredients — equipment has 10% commission rate
 - Typical output: 800-1500 tokens (scales with ingredient count)
 - Latency: <100ms (local computation, no OpenAI call)

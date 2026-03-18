@@ -648,11 +648,13 @@ MCP server for recipe commerce intelligence. Extracts ingredients from cooking v
 
 ### match_ingredients_to_products
 - Input: ingredients array OR recipe_id from prior extraction
-- Output: products array [{ingredient, productName, category, is_optional, affiliateProgram, estimatedPrice {min, max, currency}, commissionRate, affiliateScore, substitutes}], ingredient_count
+- Output: products array [{ingredient, productName, brand?, category, is_optional, affiliateProgram, estimatedPrice {min, max, currency}, commissionRate, affiliateScore, substitutes}], ingredient_count
 - Typical output: 800-1500 tokens (scales with ingredient count)
 - Latency: <100ms (local computation, no OpenAI call)
 - Affiliate programs: amazon_associates, williams_sonoma, thrive_market, instacart
 - Note: is_optional field distinguishes required vs optional ingredients — use to build tiered shopping lists
+- Note: brand? field identifies the manufacturer/brand from ingredient name (e.g. "San Marzano tomatoes" → brand: "San Marzano") — use for brand-precise affiliate search queries
+- Note: when using recipe_id, equipment items are automatically included alongside ingredients
 
 ### suggest_affiliate_products
 - Input: recipe_name (required), ingredients array OR recipe_id
