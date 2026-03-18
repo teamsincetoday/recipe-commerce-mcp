@@ -10,6 +10,20 @@ Extract recipes and ingredients from cooking video transcripts, match to purchas
 | `match_ingredients_to_products` | Match ingredients to purchasable products with affiliate program details |
 | `suggest_affiliate_products` | Generate a ranked affiliate shopping list scored by revenue potential |
 
+## Connect in Claude Code — No Install Required
+
+Add to your `claude_desktop_config.json` or use `/add-mcp` in Claude Code. Free tier: 200 calls/day, no API key needed:
+
+```json
+{
+  "mcpServers": {
+    "recipe-commerce": {
+      "url": "https://recipe-commerce-mcp.sincetoday.workers.dev/mcp"
+    }
+  }
+}
+```
+
 ## Quick Start
 
 ```bash
@@ -58,7 +72,7 @@ Returns:
   "result": {
     "recipeName": "Beef Bourguignon",
     "ingredients": [
-      { "name": "beef chuck", "quantity": "2", "unit": "lbs", "category": "meat", "optional": false }
+      { "name": "beef chuck", "quantity": "2", "unit": "lbs", "category": "meat", "is_optional": false }
     ],
     "equipment": [
       { "name": "Le Creuset Dutch oven 5.5qt", "category": "cookware", "requiredForRecipe": true }
@@ -81,7 +95,7 @@ Returns:
 }
 ```
 
-Returns affiliate program details (Amazon Associates, ShareASale, Awin), price range, commission rate (2–10%), and substitution alternatives.
+Returns affiliate program details (Amazon Associates, ShareASale, Awin), price range, commission rate (2–10%), `brand?` (extracted brand name for branded ingredients, e.g. "Maldon" for "Maldon salt"), `estimatedCommission` (USD estimate based on price × commission rate), and substitution alternatives.
 
 ### `suggest_affiliate_products`
 
@@ -97,7 +111,7 @@ Returns ingredients and equipment ranked by affiliate revenue score. Equipment s
 
 ## Example Output
 
-Real extraction from a Serious Eats beef bourguignon recipe (eval score: **F1=0.88**, $0.000370/call, 7054ms):
+Real extraction from a Serious Eats beef bourguignon recipe (eval score: **F1=1.00**, $0.000370/call, 2608ms):
 
 ```json
 {
@@ -105,17 +119,29 @@ Real extraction from a Serious Eats beef bourguignon recipe (eval score: **F1=0.
   "ingredients": [
     {
       "name": "Dutch oven (5.5 qt)",
+      "brand": "Le Creuset",
       "category": "equipment",
+      "is_optional": false,
       "affiliate_revenue_score": 0.92,
-      "amazon_search_terms": ["dutch oven 5.5 quart", "Le Creuset 5.5 qt"],
-      "estimated_commission_usd": 8.50
+      "estimatedCommission": 8.50,
+      "amazon_search_terms": ["dutch oven 5.5 quart", "Le Creuset 5.5 qt"]
+    },
+    {
+      "name": "Maldon sea salt",
+      "brand": "Maldon",
+      "category": "ingredient",
+      "is_optional": false,
+      "affiliate_revenue_score": 0.18,
+      "estimatedCommission": 0.42
     },
     {
       "name": "beef chuck",
+      "brand": null,
       "category": "ingredient",
+      "is_optional": false,
       "affiliate_revenue_score": 0.12,
-      "amazon_search_terms": null,
-      "estimated_commission_usd": null
+      "estimatedCommission": null,
+      "amazon_search_terms": null
     }
   ]
 }
