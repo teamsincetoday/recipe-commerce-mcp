@@ -301,8 +301,11 @@ function sleep(ms: number): Promise<void> {
 
 /**
  * Returns true for transient OpenAI errors that are worth retrying:
- * rate limits (429), server errors (5xx), and network timeouts.
+ * rate limits (429), server errors (5xx), and network-level connection errors.
  * Does NOT retry on 4xx client errors (bad request, auth, etc.).
+ * Does NOT retry on LLM call timeouts — if the API is slow enough to hit the
+ * 15s threshold, a retry will also timeout, doubling worst-case latency
+ * (~20s → ~46s) with no improvement in success rate (observed 2026-03-19).
  */
 function isRetryableError(err: unknown): boolean {
   if (err instanceof OpenAI.APIError) {
@@ -310,7 +313,8 @@ function isRetryableError(err: unknown): boolean {
   }
   if (err instanceof Error) {
     const msg = err.message.toLowerCase();
-    return msg.includes("timeout") || msg.includes("timed out") || msg.includes("etimedout") || msg.includes("econnreset");
+    // Only retry network-level transient connection errors, not read timeouts
+    return msg.includes("etimedout") || msg.includes("econnreset");
   }
   return false;
 }
