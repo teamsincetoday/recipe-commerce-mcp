@@ -111,7 +111,7 @@ Returns ingredients and equipment ranked by affiliate revenue score. Equipment s
 
 ## Example Output
 
-Real extraction from a Serious Eats beef bourguignon recipe (eval score: **F1=1.00**, $0.000370/call, 2608ms):
+Real extraction from a Serious Eats beef bourguignon recipe (live eval avg: **F1=93%**, 98/100 score, $0.000370/call, 2608ms):
 
 ```json
 {
