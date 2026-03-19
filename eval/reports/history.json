@@ -1,0 +1,58 @@
+{
+  "mcp": "recipe-commerce-mcp",
+  "reports": [
+    {
+      "timestamp": "2026-03-19T16:25:00Z",
+      "eval_mode": "live",
+      "openai_model": "gpt-4o-mini",
+      "cases_passed": 3,
+      "cases_total": 3,
+      "avg_score": 98,
+      "cases": [
+        {
+          "id": "classic-pasta-carbonara",
+          "name": "Classic Pasta Carbonara",
+          "score": 99,
+          "passed": true,
+          "products_extracted": 7,
+          "products_expected": 9,
+          "f1": 100,
+          "precision": 114,
+          "recall": 89,
+          "tokens_used": 605
+        },
+        {
+          "id": "classic-chocolate-chip-cookies",
+          "name": "Classic Chocolate Chip Cookies",
+          "score": 98,
+          "passed": true,
+          "products_extracted": 11,
+          "products_expected": 9,
+          "f1": 90,
+          "precision": 82,
+          "recall": 100,
+          "tokens_used": 938
+        },
+        {
+          "id": "japanese-chicken-karaage",
+          "name": "Japanese Chicken Karaage",
+          "score": 98,
+          "passed": true,
+          "products_extracted": 11,
+          "products_expected": 9,
+          "f1": 90,
+          "precision": 82,
+          "recall": 100,
+          "tokens_used": 945
+        }
+      ],
+      "summary": {
+        "avg_f1": 93,
+        "avg_precision": 93,
+        "avg_recall": 96,
+        "avg_products_per_recipe": 10,
+        "avg_tokens": 829
+      }
+    }
+  ]
+}
