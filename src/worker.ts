@@ -712,7 +712,7 @@ function getExamplesResponse() {
       },
       {
         tool: "match_ingredients_to_products",
-        description: "Match each ingredient and piece of equipment from a cached recipe extraction to purchasable products via affiliate network lookup. Returns product_name, affiliate_network, estimated_commission_pct, and match_confidence per ingredient. Reads from cache — no re-extraction cost.",
+        description: "Match each ingredient and piece of equipment from a cached recipe extraction to purchasable products via affiliate network lookup. Per match: product_name, brand (if identifiable), is_optional (true when ingredient can be substituted), affiliate_network, estimated_commission_pct, match_confidence. Reads from cache — no re-extraction cost.",
         input: { recipe_id: "beef-bourguignon-ep-47" },
         output: {
           recipe_id: "beef-bourguignon-ep-47",
