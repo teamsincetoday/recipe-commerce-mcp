@@ -349,32 +349,52 @@ export async function extractRecipeIngredients(
 
   const userMessage = `Extract recipe ingredients and equipment from this cooking video transcript:\n\n${text}`;
 
+  // TIMEOUT_MS: 25s total budget for the entire extraction (including any retry).
+  // Promise.race is used instead of the OpenAI SDK `timeout` option because
+  // AbortSignal.timeout() is not reliably supported in Cloudflare Workers.
+  // Preventive fix: same root cause as newsletter 46s timeout pattern (2026-03-26).
+  const EXTRACTION_TIMEOUT_MS = 25_000;
+
   let response: OpenAI.Chat.Completions.ChatCompletion | undefined;
   let extractionError: unknown;
-  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-    try {
-      response = await client.chat.completions.create({
-        model: OPENAI_MODEL,
-        messages: [
-          { role: "system", content: EXTRACTION_SYSTEM_PROMPT },
-          { role: "user", content: userMessage },
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0,
-        max_tokens: 2000,
-        stream: false,
-      });
-      extractionError = undefined;
-      break;
-    } catch (err) {
-      extractionError = err;
-      if (attempt < MAX_RETRIES && isRetryableError(err)) {
-        await sleep(RETRY_DELAY_MS);
-      } else {
+
+  const attemptExtraction = async (): Promise<void> => {
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        response = await client.chat.completions.create({
+          model: OPENAI_MODEL,
+          messages: [
+            { role: "system", content: EXTRACTION_SYSTEM_PROMPT },
+            { role: "user", content: userMessage },
+          ],
+          response_format: { type: "json_object" },
+          temperature: 0,
+          max_tokens: 2000,
+          stream: false,
+        });
+        extractionError = undefined;
         break;
+      } catch (err) {
+        extractionError = err;
+        if (attempt < MAX_RETRIES && isRetryableError(err)) {
+          await sleep(RETRY_DELAY_MS);
+        } else {
+          break;
+        }
       }
     }
-  }
+  };
+
+  await Promise.race([
+    attemptExtraction(),
+    new Promise<never>((_, reject) =>
+      setTimeout(
+        () => reject(new Error(`extraction_timeout_${EXTRACTION_TIMEOUT_MS}ms`)),
+        EXTRACTION_TIMEOUT_MS,
+      ),
+    ),
+  ]);
+
   if (!response) {
     // Re-throw so the worker's try-catch can surface via errorResult()
     throw extractionError;
