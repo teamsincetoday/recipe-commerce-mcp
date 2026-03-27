@@ -250,13 +250,20 @@ function createMcpServer(env: Env, request: Request, ctx: ExecutionContext): Mcp
         .max(ID_MAX_CHARS)
         .optional()
         .describe("Optional recipe identifier for caching. Auto-derived from content if omitted."),
+      include_aesthetic_tags: z
+        .boolean()
+        .optional()
+        .default(false)
+        .describe(
+          "When true, includes recipe-level aestheticTags (warmth/density/origin/tradition). Adds ~10 tokens. Default: false.",
+        ),
       api_key: z
         .string()
         .max(API_KEY_MAX_CHARS)
         .optional()
         .describe("Optional API key for paid access beyond the free tier"),
     },
-    async ({ transcript, recipe_id, api_key }) => {
+    async ({ transcript, recipe_id, include_aesthetic_tags, api_key }) => {
       const start = Date.now();
 
       const auth = await authorize(env, request, api_key);
@@ -309,6 +316,7 @@ function createMcpServer(env: Env, request: Request, ctx: ExecutionContext): Mcp
         const extracted = await extractRecipeIngredients({
           transcript,
           recipeId: recipe_id,
+          includeAesthetic: include_aesthetic_tags,
         });
 
         const resolvedId = recipe_id ?? extracted.recipeId;

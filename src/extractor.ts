@@ -127,7 +127,20 @@ const CATEGORY_PRICE_RANGE: Record<IngredientCategory, { min: number; max: numbe
 // SYSTEM PROMPT
 // ============================================================================
 
-const EXTRACTION_SYSTEM_PROMPT = `You are a culinary intelligence extractor specialized in cooking video transcripts.
+export function buildExtractionPrompt(includeAesthetic: boolean): string {
+  const aestheticInstructions = includeAesthetic ? `
+Also classify the overall aesthetic character of this dish:
+- aesthetic_warmth: "warm" (comforting, cozy, hearty), "cool" (fresh, light, crisp), or "neutral"
+- aesthetic_density: "minimal" (simple, few ingredients, clean), "maximal" (rich, layered, complex), or "balanced"
+- aesthetic_origin: "natural" (whole foods, seasonal, unprocessed), "synthetic" (convenience, processed, packaged), or "mixed"
+- aesthetic_tradition: "traditional" (heritage recipe, classic technique), "contemporary" (modern twist, fusion), or "hybrid"
+` : "";
+
+  const jsonSchema = includeAesthetic
+    ? `{"recipe_name":"...","ingredients":[...],"equipment":[...],"techniques":[...],"cuisine_type":"...","difficulty":"...","aesthetic_warmth":"...","aesthetic_density":"...","aesthetic_origin":"...","aesthetic_tradition":"..."}`
+    : `{"recipe_name":"...","ingredients":[...],"equipment":[...],"techniques":[...],"cuisine_type":"...","difficulty":"..."}`;
+
+  return `You are a culinary intelligence extractor specialized in cooking video transcripts.
 
 Extract the recipe and all ingredients from the provided cooking video transcript.
 
@@ -148,20 +161,15 @@ Also extract:
 - techniques: Cooking techniques used (e.g., ["sauté", "fold", "blanch"])
 - cuisine_type: Cuisine style if identifiable (e.g., "Italian", "Thai") — omit if unclear
 - difficulty: "easy", "medium", or "hard" based on techniques and time — omit if unclear
-
-Also classify the overall aesthetic character of this dish:
-- aesthetic_warmth: "warm" (comforting, cozy, hearty), "cool" (fresh, light, crisp), or "neutral"
-- aesthetic_density: "minimal" (simple, few ingredients, clean), "maximal" (rich, layered, complex), or "balanced"
-- aesthetic_origin: "natural" (whole foods, seasonal, unprocessed), "synthetic" (convenience, processed, packaged), or "mixed"
-- aesthetic_tradition: "traditional" (heritage recipe, classic technique), "contemporary" (modern twist, fusion), or "hybrid"
-
+${aestheticInstructions}
 Rules:
 - Focus on specific, purchasable ingredients — not vague references
 - Include specialty/branded ingredients when named (e.g., "San Marzano tomatoes", "Maldon salt")
 - Equipment category "equipment" is reserved for the IngredientCategory type — use "cookware" etc. for equipment.category
 
 Return ONLY valid JSON (no markdown, no explanation):
-{"recipe_name":"...","ingredients":[...],"equipment":[...],"techniques":[...],"cuisine_type":"...","difficulty":"...","aesthetic_warmth":"...","aesthetic_density":"...","aesthetic_origin":"...","aesthetic_tradition":"..."}`;
+${jsonSchema}`;
+}
 
 // ============================================================================
 // YOUTUBE TRANSCRIPT RESOLVER
@@ -326,6 +334,7 @@ function isRetryableError(err: unknown): boolean {
 export interface ExtractRecipeParams {
   transcript: string;     // raw text or YouTube URL
   recipeId?: string;      // optional override
+  includeAesthetic?: boolean;
 }
 
 export interface RawExtractionResult {
@@ -364,7 +373,7 @@ export async function extractRecipeIngredients(
         response = await client.chat.completions.create({
           model: OPENAI_MODEL,
           messages: [
-            { role: "system", content: EXTRACTION_SYSTEM_PROMPT },
+            { role: "system", content: buildExtractionPrompt(params.includeAesthetic ?? false) },
             { role: "user", content: userMessage },
           ],
           response_format: { type: "json_object" },
@@ -436,8 +445,10 @@ export async function extractRecipeIngredients(
   if (parsed.cuisine_type) result.cuisineType = parsed.cuisine_type;
   if (difficulty) result.difficulty = difficulty;
 
-  const aestheticTags = parseAestheticTags(parsed);
-  if (aestheticTags) result.aestheticTags = aestheticTags;
+  if (params.includeAesthetic) {
+    const aestheticTags = parseAestheticTags(parsed);
+    if (aestheticTags) result.aestheticTags = aestheticTags;
+  }
 
   // Estimate cost from token usage
   const usage = response.usage;

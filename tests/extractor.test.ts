@@ -586,7 +586,7 @@ describe("extractRecipeIngredients (mocked OpenAI)", () => {
     const { extractRecipeIngredients, setOpenAIClient } = await import("../src/extractor.js");
     setOpenAIClient(mockClient as unknown as import("openai").default);
 
-    const result = await extractRecipeIngredients({ transcript: "A carbonara recipe transcript." });
+    const result = await extractRecipeIngredients({ transcript: "A carbonara recipe transcript.", includeAesthetic: true });
     expect(result.result.aestheticTags).toBeDefined();
     expect(result.result.aestheticTags?.warmth).toBe("warm");
     expect(result.result.aestheticTags?.density).toBe("maximal");
@@ -622,5 +622,39 @@ describe("extractRecipeIngredients (mocked OpenAI)", () => {
 
     const result = await extractRecipeIngredients({ transcript: "A simple omelette transcript." });
     expect(result.result.aestheticTags).toBeUndefined();
+  });
+
+  // EXP-2026-03-11-3 opt-in: aestheticTags absent by default (includeAesthetic not set)
+  it("omits aestheticTags by default even when aesthetic fields are in response", async () => {
+    const mockClient = {
+      chat: {
+        completions: {
+          create: vi.fn().mockResolvedValue({
+            choices: [{ message: { content: JSON.stringify({ recipe_name: "Test", ingredients: [], equipment: [], techniques: [], aesthetic_warmth: "warm", aesthetic_density: "minimal", aesthetic_origin: "natural", aesthetic_tradition: "traditional" }) } }],
+            usage: null,
+          }),
+        },
+      },
+    };
+    const { extractRecipeIngredients, setOpenAIClient } = await import("../src/extractor.js");
+    setOpenAIClient(mockClient as unknown as import("openai").default);
+    const result = await extractRecipeIngredients({ transcript: "A test transcript." });
+    expect(result.result.aestheticTags).toBeUndefined();
+  });
+
+  it("buildExtractionPrompt(false) does not contain aesthetic fields", async () => {
+    const { buildExtractionPrompt } = await import("../src/extractor.js");
+    const prompt = buildExtractionPrompt(false);
+    expect(prompt).not.toContain("aesthetic_warmth");
+    expect(prompt).not.toContain("aesthetic_density");
+  });
+
+  it("buildExtractionPrompt(true) contains all 4 aesthetic axes", async () => {
+    const { buildExtractionPrompt } = await import("../src/extractor.js");
+    const prompt = buildExtractionPrompt(true);
+    expect(prompt).toContain("aesthetic_warmth");
+    expect(prompt).toContain("aesthetic_density");
+    expect(prompt).toContain("aesthetic_origin");
+    expect(prompt).toContain("aesthetic_tradition");
   });
 });
