@@ -30,3 +30,6 @@ export type {
   ExtractionMeta,
   ExtractionResponse,
 } from "./types.js";
+
+// Smithery sandbox server — required for tool scanning during publish
+export { createServer as createSandboxServer } from "./server.js";
