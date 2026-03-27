@@ -6,12 +6,12 @@
     "url": "https://github.com/teamsincetoday/recipe-commerce-mcp",
     "source": "github"
   },
-  "version": "0.1.0",
+  "version": "0.1.2",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "recipe-commerce-mcp",
-      "version": "0.1.0",
+      "version": "0.1.2",
       "transport": {
         "type": "stdio"
       },
@@ -35,7 +35,7 @@
     {
       "registryType": "npm",
       "identifier": "recipe-commerce-mcp",
-      "version": "0.1.0",
+      "version": "0.1.2",
       "transport": {
         "type": "streamable-http",
         "url": "https://recipe-commerce-mcp.sincetoday.workers.dev/mcp"
