@@ -1,0 +1,24 @@
+version: 1
+name: recipe-commerce-mcp
+description: Agent-native recipe commerce intelligence. Extract ingredients with exact quantities, equipment with brands, cooking techniques, and substitutes from any recipe URL or text. Brand detection on ingredients. Equipment-to-ingredient mapping for complete shopping lists. Aesthetic tags on every item.
+runtime: typescript
+entry: src/index.ts
+
+build:
+  install: npm ci
+  command: npm run build
+
+startCommand:
+  type: http
+  command: node dist/index.js
+
+secrets:
+  - name: OPENAI_API_KEY
+    required: true
+    description: OpenAI API key for product extraction
+  - name: MCP_API_KEYS
+    required: false
+    description: Comma-separated API keys for authenticated access (optional)
+  - name: X402_WALLET_ADDRESS
+    required: false
+    description: Ethereum wallet address for x402 micropayments (optional)
