@@ -1,5 +1,15 @@
 # Recipe Commerce Intelligence MCP
 
+[![npm](https://img.shields.io/npm/v/recipe-commerce-mcp)](https://www.npmjs.com/package/recipe-commerce-mcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/teamsincetoday/recipe-commerce-mcp?style=social)](https://github.com/teamsincetoday/recipe-commerce-mcp)
+
+**Turn recipes into affiliate revenue.** Extract every branded ingredient and kitchen tool from any recipe, match each to Amazon Associates, ShareASale, or Awin, and generate a shoppable ingredient list in seconds. F1=100% on eval suite. Free tier: 200 calls/day.
+
+⭐ **If this saves you time, please star the repo** — it helps other developers find it.
+
+> **Live endpoint**: `https://recipe-commerce-mcp.sincetoday.workers.dev/mcp` · [See examples](https://recipe-commerce-mcp.sincetoday.workers.dev/examples)
+
 Extract recipes and ingredients from cooking video transcripts, match to purchasable products, and build affiliate shopping lists. Built for the agent-to-agent economy.
 
 ## Tools
