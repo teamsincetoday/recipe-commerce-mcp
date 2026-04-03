@@ -10,7 +10,7 @@
 
 > **Live endpoint**: `https://recipe-commerce-mcp.sincetoday.workers.dev/mcp` · [See examples](https://recipe-commerce-mcp.sincetoday.workers.dev/examples)
 
-Extract recipes and ingredients from cooking video transcripts, match to purchasable products, and build affiliate shopping lists. Built for the agent-to-agent economy.
+Extract recipes and ingredients from cooking video transcripts, match to purchasable products, and build affiliate shopping lists. Built on x402, the open payment standard backed by Shopify, Google, Microsoft, Visa, and the Linux Foundation.
 
 ## Tools
 
