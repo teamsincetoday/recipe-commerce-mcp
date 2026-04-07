@@ -6,12 +6,12 @@
     "url": "https://github.com/teamsincetoday/recipe-commerce-mcp",
     "source": "github"
   },
-  "version": "0.1.2",
+  "version": "0.1.3",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "recipe-commerce-mcp",
-      "version": "0.1.2",
+      "version": "0.1.3",
       "transport": {
         "type": "stdio"
       },
@@ -25,7 +25,7 @@
         },
         {
           "name": "MCP_API_KEYS",
-          "description": "Comma-separated paid API keys for unlimited calls (optional — omit for free tier: 200 calls/day)",
+          "description": "Comma-separated paid API keys for unlimited calls (optional \u2014 omit for free tier: 200 calls/day)",
           "isRequired": false,
           "format": "string",
           "isSecret": true
@@ -35,7 +35,7 @@
     {
       "registryType": "npm",
       "identifier": "recipe-commerce-mcp",
-      "version": "0.1.2",
+      "version": "0.1.3",
       "transport": {
         "type": "streamable-http",
         "url": "https://recipe-commerce-mcp.sincetoday.workers.dev/mcp"
